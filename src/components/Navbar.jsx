@@ -296,7 +296,7 @@ const Navbar = () => {
                 }
             `}</style>
 
-            <header className="header-container sticky top-0 z-[99]">
+            <header className="bg-neutral-800 sticky top-0 z-[99]">
                 <div className="flex items-center gap-2 lg:gap-8 justify-between max-w-7xl mx-auto w-full py-4 px-6">
                     {/* Left section: Toggle Button */}
                     <div className="flex items-center gap-2 lg:gap-8 flex-grow">
@@ -396,7 +396,7 @@ const Navbar = () => {
             </header>
 
             {/* Breadcrumb Navigation */}
-            <div className="border-b border-gray-100">
+            <div className="border-b border-neutral-200 bg-neutral-100">
                 <div className="max-w-7xl mx-auto px-6 py-2">
                     <nav className="flex" aria-label="Breadcrumb">
                         <ol className="inline-flex items-center space-x-1">

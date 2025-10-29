@@ -1,16 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
+import asdmLogo from "../assets/asdm-logo3.png";
 import { useSidebar } from "../context/SidebarContext";
-import {
-    MdOutlineSpaceDashboard,
-    MdOutlineLiveHelp,
-    MdOutlineFeedback
-} from "react-icons/md";
+import * as Md from "react-icons/md";
 
 const navigation = [
-    { name: "Dashboard", icon: MdOutlineSpaceDashboard, to: "/dashboard" },
-    { name: "Grievances", icon: MdOutlineLiveHelp, to: "/grievance" },
-    { name: "Feedbacks", icon: MdOutlineFeedback, to: "/feedback" },
+    { name: "Dashboard", icon: Md.MdOutlineSpaceDashboard, to: "/dashboard" },
+    { name: "Grievances", icon: Md.MdOutlineLiveHelp, to: "/grievance" },
+    { name: "Feedbacks", icon: Md.MdOutlineFeedback, to: "/feedback" },
 ];
 
 const cn = (...classes) => classes.filter(Boolean).join(' ');
@@ -33,7 +30,7 @@ const Sidebar = () => {
 
     const sidebarClasses = cn(
         "top-0 left-0 z-50 h-screen transition-all duration-300 ease-in-out overflow-hidden flex flex-col",
-        "bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900",
+        "bg-neutral-800",
         "border-r border-slate-700/50 backdrop-blur-xl",
         navOpen
             ? "w-56 shadow-2xl shadow-black/20"
@@ -91,9 +88,6 @@ const Sidebar = () => {
                     background: linear-gradient(135deg, rgb(var(--primary) / 0.08), transparent);
                     transform: translateX(4px);
                 }
-                .logo-glow {
-                    filter: drop-shadow(0 0 8px rgb(var(--primary) / 0.3));
-                }
                 .text-glow {
                     text-shadow: 0 0 20px rgb(var(--primary) / 0.3);
                 }
@@ -124,8 +118,8 @@ const Sidebar = () => {
                 {/* Header with improved styling */}
                 <div className={`px-6 py-3 flex items-center border-b border-slate-700/30`}>
                     <div className="relative">
-                        <div className="w-12 h-12 flex items-center justify-center logo-glow">
-                            <img src="https://ds1.skillmissionassam.org/theme/img/asdm.png" alt="Logo" className="size-12 rounded-full" />
+                        <div className="w-12 h-12 flex items-center justify-center">
+                            <img src={asdmLogo} alt="Logo" className="size-12 rounded-full mix-blend-plus-lighter" />
                         </div>
                     </div>
                     <div className={cn(
@@ -177,7 +171,7 @@ const Sidebar = () => {
                                                     : "text-slate-400 group-hover:text-primary"
                                             )} />
                                             <span className={cn(
-                                                "whitespace-nowrap font-medium transition-all duration-200",
+                                                "whitespace-nowrap transition-all duration-200",
                                                 navOpen ? 'opacity-100 ml-2' : 'lg:w-0 lg:opacity-0 lg:overflow-hidden'
                                             )}>
                                                 {item.name}
