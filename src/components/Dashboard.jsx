@@ -481,8 +481,8 @@ const Dashboard = () => {
           <Navbar />
 
           {/* Main content */}
-          <main className="overflow-auto w-full flex-grow bg-gray-50">
-            <div className="max-w-7xl mx-auto py-6 px-6">
+          <main className="overflow-auto w-full flex-grow bg-neutral-100">
+            <div className="max-w-7xl mx-auto py-4 px-6">
               {/* <h2 className="text-2xl font-semibold mb-4">Grievance Overview</h2> */}
 
               {/* Loading State */}
