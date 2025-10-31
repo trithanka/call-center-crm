@@ -482,86 +482,103 @@ const IncomingGrievanceForm = () => {
           <main className="overflow-auto w-full flex-grow bg-neutral-100">
             <div className="max-w-7xl mx-auto py-6 px-6">
               {showForm ? (
-                <div className="bg-white border border-neutral-200 rounded-xl text-sm overflow-hidden">
-                  {/* Header */}
-                  <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
-                    <div>
-                      <h2 className="text-lg font-semibold text-neutral-800 tracking-tight">
-                        Incoming Grievance Form
-                      </h2>
-                      {showForm ? (
-                        <p className="text-sm text-neutral-500 mt-0.5">
-                          Please fill out the details below to record a new
-                          grievance.
+                <div className="bg-white rounded-xl border border-neutral-200 text-sm overflow-hidden">
+                  <div className="px-6 py-4 border-b border-neutral-200">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-xl font-semibold text-gray-800">
+                          Incoming Grievance Form
+                        </h2>
+                        {showForm ? (
+                          <div className="flex items-center gap-4 mt-1">
+                            <p className="text-sm text-gray-500">
+                              Submit a new incoming grievance
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="text-sm text-gray-500 mt-1">
+                            Raised by:{" "}
+                            <span className="font-medium">{formData.role}</span>{" "}
+                            | Category:{" "}
+                            <span className="font-medium">
+                              {formData.queryType}
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {error.general && (
+                    <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                      {error.general}
+                    </div>
+                  )}
+
+                  <div className="grid lg:grid-cols-3 gap-4 px-6 py-4">
+                    {/* Role */}
+                    <div className="lg:col-span-3">
+                      <label className="block text-sm font-medium text-gray-600 mb-2">
+                        Grievant's Role <span className="text-red-500">*</span>
+                      </label>
+
+                      {isLoadingMaster ? (
+                        <p className="text-sm text-gray-500">
+                          Loading roles...
                         </p>
                       ) : (
-                        <p className="text-sm text-neutral-500 mt-0.5">
-                          Raised by{" "}
-                          <span className="font-medium text-neutral-700">
-                            {formData.role}
-                          </span>
-                          {" • "}Category:{" "}
-                          <span className="font-medium text-neutral-700">
-                            {formData.queryType}
-                          </span>
+                        <div className="flex flex-wrap gap-3">
+                          {masterData.roles.map((role) => (
+                            <label
+                              key={role.pklUserRoleId}
+                              className="relative cursor-pointer"
+                            >
+                              <input
+                                type="radio"
+                                name="role"
+                                value={role.vsRoleName}
+                                checked={formData.role === role.vsRoleName}
+                                onChange={(e) =>
+                                  handleRoleChange(e.target.value)
+                                }
+                                className="peer hidden"
+                                disabled={isLoadingMaster}
+                              />
+                              <div
+                                className="px-4 py-2 rounded border border-gray-300 text-sm transition-all duration-200
+            peer-checked:ring-1 ring-emerald-600 peer-checked:border-emerald-600 peer-checked:font-medium peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/30 
+            peer-checked:text-emerald-700 dark:peer-checked:text-emerald-300"
+                              >
+                                {role.vsRoleName}
+                              </div>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+
+                      {error.role && (
+                        <p className="text-red-600 text-xs mt-1">
+                          {error.role}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  {/* Error Message */}
-                  {error.general && (
-                    <div className="mx-6 mt-4 rounded-md bg-red-50 border border-red-200 p-3 text-red-700 text-sm leading-relaxed">
-                      <strong className="font-medium">Error:</strong>{" "}
-                      {error.general}
-                    </div>
-                  )}
-
-                  {/* Form Section */}
-                  <div className="px-6 py-5 space-y-6">
-                    {/* Role */}
-                    <div>
-                      <label className="block text-sm font-medium text-neutral-700 mb-1">
-                        Grievant’s Role <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        value={formData.role}
-                        onChange={(e) => handleRoleChange(e.target.value)}
-                        disabled={isLoadingMaster}
-                        className="w-full border border-neutral-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
-                      >
-                        <option value="">
-                          {isLoadingMaster
-                            ? "Loading roles..."
-                            : "-- Select Role --"}
-                        </option>
-                        {masterData.roles.map((role) => (
-                          <option
-                            key={role.pklUserRoleId}
-                            value={role.vsRoleName}
-                          >
-                            {role.vsRoleName}
-                          </option>
-                        ))}
-                      </select>
-                      {error.role && (
-                        <p className="text-xs text-red-600 mt-1">
-                          {error.role}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Candidate Search */}
-                    {showCandidateSearch && (
-                      <div className="border border-neutral-200 rounded-md p-5 bg-neutral-50">
-                        <h3 className="text-sm font-medium text-neutral-800 mb-4">
+                  {/* Candidate Search Section */}
+                  {showCandidateSearch && (
+                    <div className="border-t border-neutral-200 bg-emerald-50">
+                      <div className="border-b border-emerald-100 dark:border-emerald-900 px-6 py-4 flex justify-between items-center">
+                        <h3 className="text-lg font-semibold text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                          <Lu.LuSearch />
                           Search{" "}
                           {formData.role === "Candidate"
                             ? "Candidate"
                             : formData.role}
                         </h3>
+                      </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="">
+                        {/* Search Filters */}
+                        <div className="flex gap-4 p-6 pb-2">
                           {/* Search Type */}
                           <div>
                             <select
@@ -569,18 +586,18 @@ const IncomingGrievanceForm = () => {
                               onChange={(e) =>
                                 setCandidateSearchType(e.target.value)
                               }
-                              className="w-full border border-neutral-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-xs h-full"
+                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                             >
-                              <option value="name">By Name</option>
-                              <option value="mobile">By Mobile</option>
+                              <option value="name">Search by Name</option>
+                              <option value="mobile">Search by Mobile</option>
                               {formData.role === "Candidate" && (
-                                <option value="id">By ID</option>
+                                <option value="id">Search by ID</option>
                               )}
                             </select>
                           </div>
 
-                          {/* Search Input */}
-                          <div>
+                          {/* Search Text */}
+                          <div className="w-full max-w-xs">
                             <input
                               type="text"
                               value={candidateSearchText}
@@ -600,12 +617,12 @@ const IncomingGrievanceForm = () => {
                                   ? "mobile number"
                                   : "ID"
                               }`}
-                              className="w-full border border-neutral-300 rounded-md px-3 py-2 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-xs h-full"
+                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                             />
                           </div>
 
                           {/* Buttons */}
-                          <div className="flex items-end gap-2">
+                          <div className="flex items-end gap-3">
                             <button
                               onClick={searchCandidates}
                               disabled={
@@ -614,11 +631,11 @@ const IncomingGrievanceForm = () => {
                               }
                               className="bg-emerald-600 border border-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-full font-medium text-sm transition-colors disabled:opacity-50 h-full"
                             >
-                              {isSearchingCandidates
-                                ? 
+                              {isSearchingCandidates ? (
                                 <Lu.LuLoaderCircle className="animate-spin" />
-                                
-                                : <Lu.LuSearch />}
+                              ) : (
+                                <Lu.LuSearch />
+                              )}
                             </button>
                             <button
                               onClick={clearSearch}
@@ -629,27 +646,470 @@ const IncomingGrievanceForm = () => {
                             </button>
                           </div>
                         </div>
+
+                        {/* Results */}
+                        {candidateSearchResults.length > 0 ? (
+                          <div className="">
+                            <div className="flex justify-between items-center px-6 border-t border-neutral-300 p-4">
+                              <h4 className="text-sm font-medium text-gray-600">
+                                Search Results
+                              </h4>
+                              <button
+                                onClick={clearSearch}
+                                className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 underline"
+                              >
+                                Clear Results
+                              </button>
+                            </div>
+
+                            <div className="overflow-hidden border border-gray-200 dark:border-neutral-700 shadow-sm max-h-96 overflow-y-auto">
+                              <table className="w-full text-xs">
+                                <thead className="bg-emerald-200 border-b sticky top-0 self-start">
+                                  <tr>
+                                    {formData.role === "Candidate" && (
+                                      <th className="px-4 py-3 text-left text-[.65rem] font-medium text-gray-600 uppercase w-20">
+                                        Candidate ID
+                                      </th>
+                                    )}
+                                    <th className="px-4 py-3 text-left text-[.65rem] font-medium text-gray-600 uppercase w-64">
+                                      {formData.role === "Candidate"
+                                        ? "Candidate Name"
+                                        : "Name"}
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-[.65rem] font-medium text-gray-600 uppercase w-32">
+                                      Mobile
+                                    </th>
+                                    {(formData.role === "Candidate" ||
+                                      formData.role === "Training Center" ||
+                                      formData.role === "Training Partner") && (
+                                      <th className="px-4 py-3 text-left text-[.65rem] font-medium text-gray-600 uppercase w-40">
+                                        District
+                                      </th>
+                                    )}
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase w-1/12"></th>
+                                  </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-neutral-300">
+                                  {candidateSearchResults.map(
+                                    (candidate, index) => (
+                                      <tr
+                                        key={
+                                          candidate.Id ||
+                                          candidate.candidateId ||
+                                          candidate.TCId ||
+                                          candidate.id ||
+                                          index
+                                        }
+                                        className="hover:bg-gray-100 cursor-pointer transition-colors"
+                                        onClick={() =>
+                                          selectCandidate(candidate)
+                                        }
+                                      >
+                                        {formData.role === "Candidate" && (
+                                          <td className="px-4 py-2 text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                                            {candidate.Id ||
+                                              candidate.candidateId}
+                                          </td>
+                                        )}
+                                        <td className="px-4 py-2 font-medium text-gray-600 dark:text-gray-100 break-words max-w-xs">
+                                          {candidate.candidateName ||
+                                            candidate.name}
+                                        </td>
+                                        <td className="px-4 py-2 text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                                          {candidate.mobile}
+                                        </td>
+                                        {(formData.role === "Candidate" ||
+                                          formData.role === "Training Center" ||
+                                          formData.role ===
+                                            "Training Partner") && (
+                                          <td className="px-4 py-2 text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                                            {candidate.district}
+                                          </td>
+                                        )}
+                                        <td className="px-4 py-2 whitespace-nowrap">
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              selectCandidate(candidate);
+                                            }}
+                                            className="text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium text-xs transition-all"
+                                          >
+                                            <Lu.LuSquareMousePointer />
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    )
+                                  )}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-center flex flex-col items-center justify-center py-8 border-t border-gray-300 dark:border-neutral-700 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-neutral-800/40">
+                            <svg
+                              className="w-12 h-12 text-gray-300"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              {/* Search Icon */}
+                              <circle
+                                cx="10"
+                                cy="10"
+                                r="7"
+                                strokeWidth="1"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <line
+                                x1="15"
+                                y1="15"
+                                x2="21"
+                                y2="21"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+
+                              {/* Sad Face inside the lens */}
+                              <g transform="translate(5.5, 5.5)">
+                                {/* Left Eye */}
+                                <circle
+                                  cx="2.8"
+                                  cy="3"
+                                  r="0.35"
+                                  fill="currentColor"
+                                />
+                                {/* Right Eye */}
+                                <circle
+                                  cx="5.8"
+                                  cy="3"
+                                  r="0.35"
+                                  fill="currentColor"
+                                />
+                                {/* Sad Mouth */}
+                                <path
+                                  d="M2.8 5.6 Q4.3 4.6 5.8 5.6"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="0.8"
+                                  strokeLinecap="round"
+                                />
+                              </g>
+                            </svg>
+
+                            <p className="text-sm font-medium">
+                              No{" "}
+                              {formData.role === "Candidate"
+                                ? "Candidate"
+                                : formData.role}{" "}
+                              data found
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Try adjusting your search filters or entering
+                              different keywords.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Selected Candidate Display */}
+                  {selectedCandidate && (
+                    <div className="mb-4 px-6 py-4 border-y border-neutral-300 transition-all bg-emerald-50">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+                        <div className="flex items-center gap-4">
+                          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center shadow-inner">
+                            <span className="text-2xl text-emerald-700 dark:text-emerald-300">
+                              <Lu.LuUser />
+                            </span>
+                          </div>
+                          <div>
+                            <h4 className="text-base font-bold text-emerald-800 dark:text-emerald-200">
+                              {selectedCandidate.candidateName ||
+                                selectedCandidate.name}
+                            </h4>
+                            <p className="text-sm text-emerald-700 dark:text-emerald-400 flex flex-wrap items-center gap-2">
+                              <span className="">
+                                {selectedCandidate.mobile}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={clearCandidateSelection}
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-xs flex gap-1"
+                        >
+                          <Lu.LuRepeat className="text-base" />
+                          {formData.role === "Candidate"
+                            ? "Candidate"
+                            : formData.role}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Show form fields when non-search role is selected OR when search result is selected */}
+                  {formData.role &&
+                    ((formData.role !== "Candidate" &&
+                      formData.role !== "Training Partner" &&
+                      formData.role !== "Training Center" &&
+                      formData.role !== "Trainer") ||
+                      selectedCandidate) && (
+                      <>
+                        <div className="grid lg:grid-cols-2 gap-6 px-6 py-1">
+                          {/* Name of the Grievant */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600">
+                              Name of the Grievant{" "}
+                              <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.name}
+                              onChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  name: e.target.value,
+                                });
+                                setError({ ...error, name: "" });
+                              }}
+                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              disabled={
+                                isFormDisabled ||
+                                (selectedCandidate &&
+                                  (selectedCandidate.candidateName ||
+                                    selectedCandidate.name))
+                              }
+                            />
+                            {error.name && (
+                              <p className="text-red-600 text-xs mt-1">
+                                {error.name}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Mobile */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600">
+                              Mobile No. <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="number"
+                              value={formData.mobile}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                if (value.length <= 10) {
+                                  setFormData({ ...formData, mobile: value });
+                                  setError({ ...error, mobile: "" });
+                                }
+                              }}
+                              maxLength={10}
+                              placeholder="Enter mobile number"
+                              required
+                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              disabled={
+                                isFormDisabled ||
+                                (selectedCandidate && selectedCandidate.mobile)
+                              }
+                            />
+                            {error.mobile && (
+                              <p className="text-red-600 text-xs mt-1">
+                                {error.mobile}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                  {/* District and Address - Show when non-search role is selected OR when search result is selected */}
+                  {formData.role &&
+                    ((formData.role !== "Candidate" &&
+                      formData.role !== "Training Partner" &&
+                      formData.role !== "Training Center" &&
+                      formData.role !== "Trainer") ||
+                      selectedCandidate) && (
+                      <>
+                        <div className="grid lg:grid-cols-2 gap-6 px-6 py-1">
+                          {/* District */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600">
+                              District <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                              value={formData.district}
+                              onChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  district: e.target.value,
+                                });
+                                setError({ ...error, district: "" });
+                              }}
+                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              disabled={
+                                isLoadingMaster ||
+                                isFormDisabled ||
+                                (selectedCandidate &&
+                                  selectedCandidate.district)
+                              } // Disable if candidate is selected and has district data
+                            >
+                              <option value="" selected disabled>
+                                {isLoadingMaster
+                                  ? "Loading districts..."
+                                  : "-- Select District --"}
+                              </option>
+                              {masterData.districts.map((district) => (
+                                <option
+                                  key={district.pklDistrictId}
+                                  value={district.vsDistrictName}
+                                >
+                                  {district.vsDistrictName}
+                                </option>
+                              ))}
+                            </select>
+                            {error.district && (
+                              <p className="text-red-600 text-xs mt-1">
+                                {error.district}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Address */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600">
+                              Address <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.address}
+                              onChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  address: e.target.value,
+                                });
+                                setError({ ...error, address: "" });
+                              }}
+                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              placeholder="Enter full address"
+                              disabled={
+                                isFormDisabled ||
+                                (selectedCandidate && selectedCandidate.address)
+                              } // Disable if candidate is selected and has address data
+                            />
+                            {error.address && (
+                              <p className="text-red-600 text-xs mt-1">
+                                {error.address}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Query Type */}
+                        <div className="px-6 py-1">
+                          <label className="block text-sm font-medium text-gray-600">
+                            Query Type <span className="text-red-500">*</span>
+                          </label>
+                          <select
+                            value={formData.queryType}
+                            onChange={(e) => {
+                              setFormData({
+                                ...formData,
+                                queryType: e.target.value,
+                              });
+                              setError({ ...error, queryType: "" });
+                            }}
+                            className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                            disabled={isLoadingMaster || isFormDisabled}
+                          >
+                            <option value="" selected disabled>
+                              {isLoadingMaster
+                                ? "Loading query types..."
+                                : "-- Select Query Type --"}
+                            </option>
+                            {masterData.queryTypes.map((queryType) => (
+                              <option
+                                key={queryType.pklQueryTypeId}
+                                value={queryType.vsQueryType}
+                              >
+                                {queryType.vsQueryType}
+                              </option>
+                            ))}
+                          </select>
+                          {error.queryType && (
+                            <p className="text-red-600 text-xs mt-1">
+                              {error.queryType}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Description */}
+                        <div className="px-6 py-1">
+                          <label className="block text-sm font-medium text-gray-600">
+                            Query Description
+                          </label>
+                          <textarea
+                            value={formData.description}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                description: e.target.value,
+                              })
+                            }
+                            rows="4"
+                            className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                            disabled={isFormDisabled}
+                          ></textarea>
+                          {error.description && (
+                            <p className="text-red-600 text-xs mt-1">
+                              {error.description}
+                            </p>
+                          )}
+                        </div>
+                      </>
+                    )}
+
+                  {/* Submit button and note - Only show when non-search role or search result is selected */}
+                  {formData.role &&
+                    ((formData.role !== "Candidate" &&
+                      formData.role !== "Training Partner" &&
+                      formData.role !== "Training Center" &&
+                      formData.role !== "Trainer") ||
+                      selectedCandidate) && (
+                      <div className="px-6 py-4 flex justify-between border-t border-gray-200">
+                        <div>
+                          <p className="text-sm text-gray-500 italic">
+                            NOTE: Please fill the form correctly and submit the
+                            incoming grievance.
+                          </p>
+                        </div>
+                        <div className="flex gap-3">
+                          <button
+                            onClick={handleInitialSubmit}
+                            className={`bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-xs flex gap-1 ${
+                              isSubmitting || isLoadingMaster || isFormDisabled
+                                ? "bg-emerald-600/50 cursor-not-allowed"
+                                : ""
+                            }`}
+                            disabled={
+                              isSubmitting || isLoadingMaster || isFormDisabled
+                            }
+                          >
+                            {isSubmitting
+                              ? "Submitting..."
+                              : isLoadingMaster
+                              ? "Loading..."
+                              : isFormDisabled
+                              ? formData.role === "Candidate"
+                                ? "Select Candidate First"
+                                : "Select Role First"
+                              : "Submit Grievance"}
+                          </button>
+                        </div>
                       </div>
                     )}
-                  </div>
-
-                  {/* Submit Section */}
-                  <div className="flex items-center justify-between px-6 py-4 border-t border-neutral-200 bg-neutral-50">
-                    <p className="text-sm text-neutral-500">
-                      Review all details carefully before submitting.
-                    </p>
-                    <button
-                      onClick={handleInitialSubmit}
-                      disabled={isSubmitting || isFormDisabled}
-                      className={`px-5 py-2 rounded-full font-medium text-sm transition-all ${
-                        isSubmitting
-                          ? "bg-neutral-300 text-neutral-600 cursor-not-allowed"
-                          : "bg-emerald-600 hover:bg-emerald-700 text-white"
-                      }`}
-                    >
-                      {isSubmitting ? "Submitting..." : "Submit Grievance"}
-                    </button>
-                  </div>
                 </div>
               ) : (
                 <>
@@ -700,7 +1160,7 @@ const IncomingGrievanceForm = () => {
                   {/* Admin Reply Section */}
                   <div className="mt-4 bg-white p-4 rounded shadow space-y-4">
                     <div>
-                      <label className="block text-sm font-medium">
+                      <label className="block text-sm font-medium text-gray-600">
                         Reply Message
                       </label>
                       <textarea
@@ -714,7 +1174,7 @@ const IncomingGrievanceForm = () => {
 
                     <div className="flex gap-4 items-center">
                       <div className="flex-1">
-                        <label className="block text-sm font-medium">
+                        <label className="block text-sm font-medium text-gray-600">
                           Status
                         </label>
                         <select
@@ -730,7 +1190,7 @@ const IncomingGrievanceForm = () => {
 
                       {status === "Forwarded to" && (
                         <div className="flex-1">
-                          <label className="block text-sm font-medium">
+                          <label className="block text-sm font-medium text-gray-600">
                             Department
                           </label>
                           <select
@@ -749,7 +1209,7 @@ const IncomingGrievanceForm = () => {
 
                     <button
                       onClick={sendMessage}
-                      className="bg-emerald-600 text-white px-4 py-2 rounded-full hover:bg-emerald-700"
+                      className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
                     >
                       Send Reply
                     </button>

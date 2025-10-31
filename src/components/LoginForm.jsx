@@ -103,7 +103,7 @@ const LoginForm = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4 w-full">
-              <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-emerald-500 transition-all">
+              <div className="flex items-center w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus-within:outline-none focus-within:ring-1 focus-within:ring-emerald-500 focus-within:border-emerald-500 transition">
                 <Lu.LuUser className="text-gray-500 mr-2" />
                 <input
                   type="text"
@@ -116,7 +116,7 @@ const LoginForm = () => {
                 />
               </div>
 
-              <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 bg-gray-50 focus-within:ring-2 focus-within:ring-emerald-500 transition-all">
+              <div className="flex items-center w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus-within:outline-none focus-within:ring-1 focus-within:ring-emerald-500 focus-within:border-emerald-500 transition">
                 <Lu.LuKeyRound className="text-gray-500 mr-2" />
                 <input
                   type="password"

@@ -352,7 +352,7 @@ const GrievanceChat = () => {
           </div>
 
           {/* Main content */}
-          <main className="overflow-auto w-full flex-grow bg-gray-50">
+          <main className="overflow-auto w-full flex-grow bg-neutral-100">
             <div className='max-w-7xl mx-auto py-6 px-6'>
 
           {showForm ? (

@@ -372,7 +372,7 @@ const GrievanceList = () => {
           </div>
 
           {/* Right Side - Filter Dropdowns */}
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 border border-gray-300 rounded-md shadow-lg">
             {/* Role Filter */}
             <div className="relative">
               <button
@@ -648,7 +648,7 @@ const GrievanceList = () => {
               <div className="flex items-end">
                 <button
                   onClick={clearAllFilters}
-                  className="px-3 py-2 text-xs flex items-center text-gray-600 hover:text-gray-800 rounded"
+                  className=" py-2 text-xs flex items-center text-gray-600 hover:text-gray-800 rounded"
                 >
                   <svg
                     className="w-4 h-4"
@@ -681,7 +681,7 @@ const GrievanceList = () => {
       <thead className="bg-white">
         <tr className="border-b border-gray-200">
           {[
-            "SL No",
+            "#",
             "Ticket ID",
             "Name",
             "Mobile",
@@ -738,7 +738,7 @@ const GrievanceList = () => {
 
               <td className="px-4 py-3">
                 <span
-                  className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs text-gray-600`}
+                  className={`inline-flex items-center rounded-full text-xs text-gray-600 whitespace-nowrap`}
                 >
                   <span
                     className={`h-2 w-2 rounded-full mr-1 ${
