@@ -1,28 +1,11 @@
 import React from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import GrievanceList from "../components/GrievanceList";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
 const Grievance = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-
-  // Breadcrumb logic
-  const segments = location.pathname.split("/").filter(Boolean);
-  const labelMap = {
-    dashboard: "Dashboard",
-    grievance: "Grievances",
-    feedback: "Feedback",
-    new: "New",
-    incoming: "Incoming",
-    outgoing: "Outgoing",
-  };
-
-  const crumbs = segments.map((seg, i) => ({
-    to: "/" + segments.slice(0, i + 1).join("/"),
-    label: labelMap[seg] ?? decodeURIComponent(seg),
-  }));
 
   return (
     <div className="">

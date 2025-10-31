@@ -48,15 +48,8 @@ const LoginForm = () => {
       setError(message);
     } catch (err) {
       console.error("Login failed:", err);
-
-      // Handle network or unexpected errors
-      if (err.message?.includes("Network")) {
-        setError("Network issue — please check your connection and try again.");
-      } else {
-        setError(
-          "Something went wrong while logging in. Please try again later."
-        );
-      }
+      setError(err.message);
+      
     } finally {
       setIsLoading(false); // Re-enable the button
     }

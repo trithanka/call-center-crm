@@ -1,36 +1,11 @@
 import React from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import FeedbackList from "../components/FeedbackList";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
 const Feedback = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-
-  // Breadcrumb logic
-  const segments = location.pathname.split("/").filter(Boolean);
-  const labelMap = { 
-    dashboard: "Dashboard", 
-    grievance: "Grievances", 
-    feedback: "Feedback",
-    "new": "New",
-    "incoming": "Incoming",
-    "outgoing": "Outgoing"
-  };
-  
-  // Special handling for outgoing forms - show Feedback instead of Grievances
-  const getBreadcrumbLabel = (seg, index, segments) => {
-    if (seg === "grievance" && segments.includes("outgoing")) {
-      return "Feedback";
-    }
-    return labelMap[seg] ?? decodeURIComponent(seg);
-  };
-  
-  const crumbs = segments.map((seg, i) => ({ 
-    to: "/" + segments.slice(0, i + 1).join("/"), 
-    label: getBreadcrumbLabel(seg, i, segments)
-  }));
 
   return (
     <div className="">

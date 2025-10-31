@@ -12,12 +12,14 @@ import IncomingGrievanceForm from "./pages/IncomingGrievanceForm";
 import OutgoingGrievanceForm from "./pages/OutgoingGrievanceForm";
 import { AuthProvider } from "./context/AuthContext";
 import { SidebarProvider } from "./context/SidebarContext";
+import { BreadcrumbProvider } from "./context/BreadcrumbContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <AuthProvider>
       <SidebarProvider>
+        <BreadcrumbProvider>
         <Routes>
         <Route path="/" element={<Login />} />
         <Route 
@@ -97,6 +99,7 @@ function App() {
         pauseOnHover
         theme="light"
       />
+        </BreadcrumbProvider>
       </SidebarProvider>
     </AuthProvider>
   );

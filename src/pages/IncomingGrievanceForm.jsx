@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import apiService from "../services/api";
@@ -8,23 +8,6 @@ import * as Lu from "react-icons/lu";
 
 const IncomingGrievanceForm = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Breadcrumb logic
-  const segments = location.pathname.split("/").filter(Boolean);
-  const labelMap = {
-    dashboard: "Dashboard",
-    grievance: "Grievances",
-    feedback: "Feedback",
-    new: "New",
-    incoming: "Incoming",
-    outgoing: "Outgoing",
-  };
-
-  const crumbs = segments.map((seg, i) => ({
-    to: "/" + segments.slice(0, i + 1).join("/"),
-    label: labelMap[seg] ?? decodeURIComponent(seg),
-  }));
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [status, setStatus] = useState("Pending");
@@ -151,8 +134,18 @@ const IncomingGrievanceForm = () => {
 
   // Handle role change to show candidate search
   const handleRoleChange = (role) => {
-    setFormData({ ...formData, role: role });
+    // Clear error for role
     setError({ ...error, role: "" });
+
+    // Always clear prefilled data when role changes
+    setFormData((prev) => ({
+      ...prev,
+      role: role,
+      name: "",
+      mobile: "",
+      district: "",
+      address: "",
+    }));
 
     // Reset search filter when role changes
     setCandidateSearchText("");
@@ -163,14 +156,6 @@ const IncomingGrievanceForm = () => {
     if (role === "Candidate") {
       setShowCandidateSearch(true);
       setIsFormDisabled(true);
-      // Clear form data when switching to candidate search
-      setFormData((prev) => ({
-        ...prev,
-        name: "",
-        mobile: "",
-        district: "",
-        address: "",
-      }));
     } else if (
       role === "Training Partner" ||
       role === "Training Center" ||
@@ -179,24 +164,14 @@ const IncomingGrievanceForm = () => {
       // Show search for training roles
       setShowCandidateSearch(true);
       setIsFormDisabled(true);
-      // Clear form data when switching to training search
-      setFormData((prev) => ({
-        ...prev,
-        name: "",
-        mobile: "",
-        district: "",
-        address: "",
-      }));
     } else if (role !== "") {
       // Enable form for other roles
       setShowCandidateSearch(false);
       setIsFormDisabled(false);
-      setSelectedCandidate(null);
     } else {
       // Disable form when no role is selected
       setShowCandidateSearch(false);
       setIsFormDisabled(true);
-      setSelectedCandidate(null);
     }
   };
 
@@ -352,7 +327,7 @@ const IncomingGrievanceForm = () => {
         (q) => q.vsQueryType === queryType
       );
       const selectedDistrict = masterData.districts.find(
-        (d) => d.vsDistrictName === district
+        (d) => d.vsDistrictName === district 
       );
 
       if (!selectedRole || !selectedQueryType || !selectedDistrict) {
@@ -491,12 +466,12 @@ const IncomingGrievanceForm = () => {
                         </h2>
                         {showForm ? (
                           <div className="flex items-center gap-4 mt-1">
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-700">
                               Submit a new incoming grievance
                             </p>
                           </div>
                         ) : (
-                          <p className="text-sm text-gray-500 mt-1">
+                          <p className="text-sm text-gray-700 mt-1">
                             Raised by:{" "}
                             <span className="font-medium">{formData.role}</span>{" "}
                             | Category:{" "}
@@ -517,12 +492,12 @@ const IncomingGrievanceForm = () => {
                   <div className="grid lg:grid-cols-3 gap-4 px-6 py-4">
                     {/* Role */}
                     <div className="lg:col-span-3">
-                      <label className="block text-sm font-medium text-gray-600 mb-2">
+                      <label className="block text-sm font-medium text-gray-800 mb-2">
                         Grievant's Role <span className="text-red-500">*</span>
                       </label>
 
                       {isLoadingMaster ? (
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-700">
                           Loading roles...
                         </p>
                       ) : (
@@ -546,7 +521,7 @@ const IncomingGrievanceForm = () => {
                               <div
                                 className="px-4 py-2 rounded border border-gray-300 text-sm transition-all duration-200
             peer-checked:ring-1 ring-emerald-600 peer-checked:border-emerald-600 peer-checked:font-medium peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/30 
-            peer-checked:text-emerald-700 dark:peer-checked:text-emerald-300"
+            peer-checked:text-emerald-700 dark:peer-checked:text-black-300"
                               >
                                 {role.vsRoleName}
                               </div>
@@ -586,7 +561,7 @@ const IncomingGrievanceForm = () => {
                               onChange={(e) =>
                                 setCandidateSearchType(e.target.value)
                               }
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                             >
                               <option value="name">Search by Name</option>
                               <option value="mobile">Search by Mobile</option>
@@ -617,7 +592,7 @@ const IncomingGrievanceForm = () => {
                                   ? "mobile number"
                                   : "ID"
                               }`}
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                             />
                           </div>
 
@@ -651,7 +626,7 @@ const IncomingGrievanceForm = () => {
                         {candidateSearchResults.length > 0 ? (
                           <div className="">
                             <div className="flex justify-between items-center px-6 border-t border-neutral-300 p-4">
-                              <h4 className="text-sm font-medium text-gray-600">
+                              <h4 className="text-sm font-medium text-gray-800">
                                 Search Results
                               </h4>
                               <button
@@ -667,22 +642,22 @@ const IncomingGrievanceForm = () => {
                                 <thead className="bg-emerald-200 border-b sticky top-0 self-start">
                                   <tr>
                                     {formData.role === "Candidate" && (
-                                      <th className="px-4 py-3 text-left text-[.65rem] font-medium text-gray-600 uppercase w-20">
+                                      <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-20">
                                         Candidate ID
                                       </th>
                                     )}
-                                    <th className="px-4 py-3 text-left text-[.65rem] font-medium text-gray-600 uppercase w-64">
+                                    <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-64">
                                       {formData.role === "Candidate"
                                         ? "Candidate Name"
                                         : "Name"}
                                     </th>
-                                    <th className="px-4 py-3 text-left text-[.65rem] font-medium text-gray-600 uppercase w-32">
+                                    <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-32">
                                       Mobile
                                     </th>
                                     {(formData.role === "Candidate" ||
                                       formData.role === "Training Center" ||
                                       formData.role === "Training Partner") && (
-                                      <th className="px-4 py-3 text-left text-[.65rem] font-medium text-gray-600 uppercase w-40">
+                                      <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-40">
                                         District
                                       </th>
                                     )}
@@ -706,23 +681,23 @@ const IncomingGrievanceForm = () => {
                                         }
                                       >
                                         {formData.role === "Candidate" && (
-                                          <td className="px-4 py-2 text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                                          <td className="px-4 py-2 text-gray-900 dark:text-black-900 font-medium whitespace-nowrap">
                                             {candidate.Id ||
                                               candidate.candidateId}
                                           </td>
                                         )}
-                                        <td className="px-4 py-2 font-medium text-gray-600 dark:text-gray-100 break-words max-w-xs">
+                                        <td className="px-4 py-2 font-semibold text-gray-900 dark:text-black-900 break-words max-w-xs">
                                           {candidate.candidateName ||
                                             candidate.name}
                                         </td>
-                                        <td className="px-4 py-2 text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                                        <td className="px-4 py-2 text-gray-900 dark:text-black-900 font-medium whitespace-nowrap">
                                           {candidate.mobile}
                                         </td>
                                         {(formData.role === "Candidate" ||
                                           formData.role === "Training Center" ||
                                           formData.role ===
                                             "Training Partner") && (
-                                          <td className="px-4 py-2 text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                                          <td className="px-4 py-2 text-gray-900 dark:text-black-900 font-medium whitespace-nowrap">
                                             {candidate.district}
                                           </td>
                                         )}
@@ -806,7 +781,7 @@ const IncomingGrievanceForm = () => {
                                 : formData.role}{" "}
                               data found
                             </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            <p className="text-xs text-gray-700 dark:text-gray-400">
                               Try adjusting your search filters or entering
                               different keywords.
                             </p>
@@ -862,7 +837,7 @@ const IncomingGrievanceForm = () => {
                         <div className="grid lg:grid-cols-2 gap-6 px-6 py-1">
                           {/* Name of the Grievant */}
                           <div>
-                            <label className="block text-sm font-medium text-gray-600">
+                            <label className="block text-sm font-medium text-gray-800">
                               Name of the Grievant{" "}
                               <span className="text-red-500">*</span>
                             </label>
@@ -876,7 +851,7 @@ const IncomingGrievanceForm = () => {
                                 });
                                 setError({ ...error, name: "" });
                               }}
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                               disabled={
                                 isFormDisabled ||
                                 (selectedCandidate &&
@@ -893,7 +868,7 @@ const IncomingGrievanceForm = () => {
 
                           {/* Mobile */}
                           <div>
-                            <label className="block text-sm font-medium text-gray-600">
+                            <label className="block text-sm font-medium text-gray-800">
                               Mobile No. <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -909,7 +884,7 @@ const IncomingGrievanceForm = () => {
                               maxLength={10}
                               placeholder="Enter mobile number"
                               required
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                               disabled={
                                 isFormDisabled ||
                                 (selectedCandidate && selectedCandidate.mobile)
@@ -936,7 +911,7 @@ const IncomingGrievanceForm = () => {
                         <div className="grid lg:grid-cols-2 gap-6 px-6 py-1">
                           {/* District */}
                           <div>
-                            <label className="block text-sm font-medium text-gray-600">
+                            <label className="block text-sm font-medium text-gray-800">
                               District <span className="text-red-500">*</span>
                             </label>
                             <select
@@ -948,7 +923,7 @@ const IncomingGrievanceForm = () => {
                                 });
                                 setError({ ...error, district: "" });
                               }}
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                               disabled={
                                 isLoadingMaster ||
                                 isFormDisabled ||
@@ -961,14 +936,16 @@ const IncomingGrievanceForm = () => {
                                   ? "Loading districts..."
                                   : "-- Select District --"}
                               </option>
-                              {masterData.districts.map((district) => (
-                                <option
-                                  key={district.pklDistrictId}
-                                  value={district.vsDistrictName}
-                                >
-                                  {district.vsDistrictName}
-                                </option>
-                              ))}
+                              {masterData.districts
+                                .filter((district) => district.fklStateId === 4)
+                                .map((district) => (
+                                  <option
+                                    key={district.pklDistrictId}
+                                    value={district.vsDistrictName}
+                                  >
+                                    {district.vsDistrictName}
+                                  </option>
+                                ))}
                             </select>
                             {error.district && (
                               <p className="text-red-600 text-xs mt-1">
@@ -979,7 +956,7 @@ const IncomingGrievanceForm = () => {
 
                           {/* Address */}
                           <div>
-                            <label className="block text-sm font-medium text-gray-600">
+                            <label className="block text-sm font-medium text-gray-800">
                               Address <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -992,7 +969,7 @@ const IncomingGrievanceForm = () => {
                                 });
                                 setError({ ...error, address: "" });
                               }}
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                               placeholder="Enter full address"
                               disabled={
                                 isFormDisabled ||
@@ -1009,7 +986,7 @@ const IncomingGrievanceForm = () => {
 
                         {/* Query Type */}
                         <div className="px-6 py-1">
-                          <label className="block text-sm font-medium text-gray-600">
+                          <label className="block text-sm font-medium text-gray-800">
                             Query Type <span className="text-red-500">*</span>
                           </label>
                           <select
@@ -1021,7 +998,7 @@ const IncomingGrievanceForm = () => {
                               });
                               setError({ ...error, queryType: "" });
                             }}
-                            className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                            className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                             disabled={isLoadingMaster || isFormDisabled}
                           >
                             <option value="" selected disabled>
@@ -1047,7 +1024,7 @@ const IncomingGrievanceForm = () => {
 
                         {/* Description */}
                         <div className="px-6 py-1">
-                          <label className="block text-sm font-medium text-gray-600">
+                          <label className="block text-sm font-medium text-gray-800">
                             Query Description
                           </label>
                           <textarea
@@ -1059,7 +1036,7 @@ const IncomingGrievanceForm = () => {
                               })
                             }
                             rows="4"
-                            className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                            className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                             disabled={isFormDisabled}
                           ></textarea>
                           {error.description && (
@@ -1080,7 +1057,7 @@ const IncomingGrievanceForm = () => {
                       selectedCandidate) && (
                       <div className="px-6 py-4 flex justify-between border-t border-gray-200">
                         <div>
-                          <p className="text-sm text-gray-500 italic">
+                          <p className="text-sm text-gray-700 italic">
                             NOTE: Please fill the form correctly and submit the
                             incoming grievance.
                           </p>
@@ -1148,7 +1125,7 @@ const IncomingGrievanceForm = () => {
                             }`}
                           >
                             <p className="whitespace-pre-wrap">{msg.message}</p>
-                            <p className="text-xs mt-1 text-gray-500">
+                            <p className="text-xs mt-1 text-gray-700">
                               {msg.timestamp}
                             </p>
                           </div>
@@ -1160,7 +1137,7 @@ const IncomingGrievanceForm = () => {
                   {/* Admin Reply Section */}
                   <div className="mt-4 bg-white p-4 rounded shadow space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-600">
+                      <label className="block text-sm font-medium text-gray-800">
                         Reply Message
                       </label>
                       <textarea
@@ -1174,7 +1151,7 @@ const IncomingGrievanceForm = () => {
 
                     <div className="flex gap-4 items-center">
                       <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-600">
+                        <label className="block text-sm font-medium text-gray-800">
                           Status
                         </label>
                         <select
@@ -1190,7 +1167,7 @@ const IncomingGrievanceForm = () => {
 
                       {status === "Forwarded to" && (
                         <div className="flex-1">
-                          <label className="block text-sm font-medium text-gray-600">
+                          <label className="block text-sm font-medium text-gray-800">
                             Department
                           </label>
                           <select

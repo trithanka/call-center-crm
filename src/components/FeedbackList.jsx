@@ -333,7 +333,7 @@ const FeedbackList = () => {
   return (
     <div className="">
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg shadow-sm border p-3 mb-4">
+      <div className="bg-white rounded-xl border border-neutral-200 p-3 mb-4">
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Left Side - Search Input */}
           <div className="flex-1">
@@ -372,7 +372,7 @@ const FeedbackList = () => {
           </div>
 
           {/* Right Side - Filter Dropdowns */}
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 border border-gray-300 rounded-md shadow-lg">
             {/* Role Filter */}
             <div className="relative">
               <button
@@ -668,145 +668,163 @@ const FeedbackList = () => {
 
       {/* Conditional Rendering: Table or No Data */}
       {grievances.length > 0 ? (
-        <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-white border-b-2 border-gray-200">
-                <tr>
-                  <th className="px-4 py-3 text-left text-[.6rem] font-bold text-blue-600 uppercase tracking-wider">
-                    SL No
-                  </th>
-                  <th className="px-4 py-3 text-left text-[.6rem] font-bold text-blue-600 uppercase tracking-wider">
-                    Ticket ID
-                  </th>
-                  <th className="px-4 py-3 text-left text-[.6rem] font-bold text-blue-600 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-4 py-3 text-left text-[.6rem] font-bold text-blue-600 uppercase tracking-wider">
-                    Mobile
-                  </th>
-                  <th className="px-4 py-3 text-left text-[.6rem] font-bold text-blue-600 uppercase tracking-wider">
-                    Role
-                  </th>
-                  <th className="px-4 py-3 text-left text-[.6rem] font-bold text-blue-600 uppercase tracking-wider">
-                    Query Type
-                  </th>
-                  <th className="px-4 py-3 text-left text-[.6rem] font-bold text-blue-600 uppercase tracking-wider">
-                    Entry Type
-                  </th>
-                  <th className="px-4 py-3 text-left text-[.6rem] font-bold text-blue-600 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th className="px-4 py-3 text-left text-[.6rem] font-bold text-blue-600 uppercase tracking-wider">
-                    Answered
-                  </th>
-                  <th className="px-4 py-3 text-left text-[.6rem] font-bold text-blue-600 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="text-xs divide-y divide-gray-200">
-                {grievances.map((item, index) => (
-                  <tr key={item.pklCrmUserId} className="hover:bg-gray-50">
-                    <td className="px-3 py-2">
-                      {(currentPage - 1) * pageSize + index + 1}
-                    </td>
-                    <td className="px-3 py-2">#{item.vsTicketId || "N/A"}</td>
-                    <td className="px-3 py-2">{item.vsUserName || "N/A"}</td>
-                    <td className="px-3 py-2">{item.vsMobile || "N/A"}</td>
-                    <td className="px-3 py-2">{item.vsRoleName || "N/A"}</td>
-                    <td className="px-3 py-2">{item.vsQueryType || "N/A"}</td>
-                    <td className="px-3 py-2">
-                      <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
-                        {item.vsEntryType || "N/A"}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2 text-center">
-                      {formatDate(item.vsEntryDateTime)}
-                    </td>
-                    <td className="px-3 py-2 text-center">
-                      <span
-                        className={`${
-                          item.bIsUnanswered === 0 || item.bIsUnanswered === "0"
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }`}
-                      >
-                        {item.bIsUnanswered === 0 || item.bIsUnanswered === "0"
-                          ? "Yes"
-                          : "No"}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2">
-                      <div className="flex items-center justify-center gap-1">
-                        <Link
-                          to={`/chats?id=${item.pklCrmUserId}`}
-                          className="text-gray-600 hover:text-blue-600 text-xs font-medium"
-                          title="View Details"
-                        >
-                          <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          width="10"
-                                          height="10"
-                                          viewBox="0 0 24 24"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          strokeWidth="2"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                        >
-                                          <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
-                                          <path d="m21 3-9 9" />
-                                          <path d="M15 3h6v6" />
-                                        </svg>
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-700">Rows per page:</span>
-                <select
-                  value={pageSize}
-                  onChange={(e) =>
-                    handlePageSizeChange(parseInt(e.target.value))
-                  }
-                  className="border border-gray-300 rounded px-2 py-1 text-sm"
+  {/* Table */}
+  <div className="overflow-x-auto">
+    <table className="w-full text-xs">
+      <thead className="bg-white">
+        <tr className="border-b border-gray-200">
+          {[
+            "#",
+            "Ticket ID",
+            "Name",
+            "Mobile",
+            "Role",
+            "Query Type",
+            "Date",
+            "Answered",
+            "",
+          ].map((header, idx) => (
+            <th
+              key={idx}
+              className="px-4 py-4 text-left text-[0.65rem] font-semibold text-gray-500 uppercase tracking-wider"
+            >
+              {header}
+            </th>
+          ))}
+        </tr>
+      </thead>
+
+      <tbody className="divide-y divide-gray-100">
+        {grievances.length > 0 ? (
+          grievances.map((item, index) => (
+            <tr
+              key={item.pklCrmUserId}
+              className="hover:bg-neutral-100/70 transition-colors duration-200"
+            >
+              <td className="px-4 py-3 text-gray-700">
+                {(currentPage - 1) * pageSize + index + 1}
+              </td>
+
+              <td className="px-4 py-3 text-blue-700">
+                #{item.vsTicketId || "N/A"}
+              </td>
+
+              <td className="px-4 py-3 text-gray-800 font-semibold">
+                {item.vsUserName || "N/A"}
+              </td>
+
+              <td className="px-4 py-3 text-gray-600">
+                {item.vsMobile || "N/A"}
+              </td>
+
+              <td className="px-4 py-3 text-gray-700">
+                {item.vsRoleName || "N/A"}
+              </td>
+
+              <td className="px-4 py-3 text-gray-700">
+                {item.vsQueryType || "N/A"}
+              </td>
+
+              <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                {formatDate(item.vsEntryDateTime)}
+              </td>
+
+              <td className="px-4 py-3">
+                <span
+                  className={`${
+                    item.bIsUnanswered === 0 || item.bIsUnanswered === "0"
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
                 >
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-                >
-                  Previous
-                </button>
-                <span className="text-sm text-gray-700">
-                  Page {currentPage} of {totalPages}
+                  {item.bIsUnanswered === 0 || item.bIsUnanswered === "0"
+                    ? "Yes"
+                    : "No"}
                 </span>
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              </td>
+
+              <td className="px-4 py-3 text-center">
+                <Link
+                  to={`/chats?id=${item.pklCrmUserId}&source=feedback`}
+                  className="inline-flex items-center justify-center text-gray-500 hover:text-blue-600 transition-colors duration-150"
+                  title="View Ticket"
                 >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-3 h-3"
+                  >
+                    <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
+                    <path d="m21 3-9 9" />
+                    <path d="M15 3h6v6" />
+                  </svg>
+                </Link>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td
+              colSpan="9"
+              className="px-6 py-8 text-center text-gray-500 italic bg-gray-50"
+            >
+              No feedback found. 🌿 Everything's calm for now.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+
+  {/* Pagination */}
+  {totalPages > 1 && (
+    <div className="px-4 py-3 border-t border-gray-100 bg-gray-50 flex flex-wrap items-center justify-between">
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-gray-600">Rows per page:</span>
+        <select
+          value={pageSize}
+          onChange={(e) => handlePageSizeChange(parseInt(e.target.value))}
+          className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+        >
+          {[10, 25, 50, 100].map((num) => (
+            <option key={num} value={num}>
+              {num}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-3 py-1.5 border border-gray-300 rounded-md text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm transition-all"
+        >
+          Previous
+        </button>
+        <span className="text-xs text-gray-600">
+          Page <span className="font-semibold">{currentPage}</span> of{" "}
+          <span className="font-semibold">{totalPages}</span>
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1.5 border border-gray-300 rounded-md text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm transition-all"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  )}
         </div>
       ) : (
         /* No Data Found Section */

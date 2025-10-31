@@ -3,12 +3,14 @@ import { toast } from "react-toastify";
 import { useLocation, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+import { useBreadcrumbMetadata } from "../context/BreadcrumbContext";
 import apiService from "../services/api";
 import * as Lu from "react-icons/lu";
 import * as Tb from "react-icons/tb";
 
 export function Chat() {
   const location = useLocation();
+  const { updateMetadata, clearMetadata } = useBreadcrumbMetadata();
   const [chatData, setChatData] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
@@ -69,6 +71,11 @@ export function Chat() {
 
         const result = await apiService.getChatData(pklCrmUserId);
         setChatData(result.data);
+        
+        // Update breadcrumb with ticket number if available
+        if (result.data?.initial?.[0]?.vsTicketId) {
+          updateMetadata({ ticketNumber: result.data.initial[0].vsTicketId });
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -76,8 +83,15 @@ export function Chat() {
       }
     };
 
-    fetchChatData();
-  }, [pklCrmUserId]);
+    if (pklCrmUserId) {
+      fetchChatData();
+    }
+    
+    // Clean up metadata when component unmounts
+    return () => {
+      clearMetadata();
+    };
+  }, [pklCrmUserId, updateMetadata, clearMetadata]);
 
   // Function to format date for display
   const formatDate = (dateString) => {
@@ -492,25 +506,25 @@ export function Chat() {
 
                         {/* Response Form Modal */}
                         {showResponseForm && (
-                          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                            <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-                              <div className="border-b border-gray-200 px-6 py-4">
+                          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4">
+                            <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+                              {/* Header */}
+                              <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 py-4 rounded-t-xl">
                                 <div className="flex items-center justify-between">
                                   <div>
-                                    <h3 className="text-lg font-medium text-gray-800">
+                                    <h3 className="text-lg font-semibold text-white">
                                       Add Your Response
                                     </h3>
-                                    <p className="text-sm text-gray-600 mt-1">
-                                      Share your thoughts and keep the
-                                      conversation going
+                                    <p className="text-sm text-emerald-50 mt-1">
+                                      Share your thoughts and keep the conversation going
                                     </p>
                                   </div>
                                   <button
                                     onClick={() => setShowResponseForm(false)}
-                                    className="text-gray-400 hover:text-gray-600 focus:outline-none"
+                                    className="text-white hover:text-emerald-100 focus:outline-none transition-colors p-1 rounded-md hover:bg-emerald-800"
                                   >
                                     <svg
-                                      className="w-6 h-6"
+                                      className="w-5 h-5"
                                       fill="none"
                                       stroke="currentColor"
                                       viewBox="0 0 24 24"
@@ -526,9 +540,11 @@ export function Chat() {
                                 </div>
                               </div>
 
-                              <div className="p-6">
-                                <div className="mb-6">
-                                  <label className="block text-sm font-medium text-gray-700 flex gap-1 items-center mb-2">
+                              {/* Form Content */}
+                              <div className="p-6 space-y-5">
+                                {/* Response Message */}
+                                <div>
+                                  <label className="block text-sm font-semibold text-gray-800 mb-2">
                                     Response Message{" "}
                                     <span className="text-red-500">*</span>
                                   </label>
@@ -541,16 +557,17 @@ export function Chat() {
                                       rows="4"
                                       maxLength="500"
                                       placeholder="Type your response to continue the timeline..."
-                                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none transition"
                                     ></textarea>
-                                    <div className="absolute bottom-3 right-3 text-xs text-gray-400">
+                                    <div className="absolute bottom-3 right-3 text-xs text-gray-500 font-medium">
                                       {newMessage.length}/500
                                     </div>
                                   </div>
                                 </div>
 
-                                <div className="mb-6">
-                                  <label className="block text-sm font-medium text-gray-700 flex gap-1 items-center mb-2">
+                                {/* Date and Time */}
+                                <div>
+                                  <label className="block text-sm font-semibold text-gray-800 mb-2">
                                     Date and Time{" "}
                                     <span className="text-red-500">*</span>
                                   </label>
@@ -560,12 +577,13 @@ export function Chat() {
                                     onChange={(e) =>
                                       setResponseDateTime(e.target.value)
                                     }
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
                                   />
                                 </div>
 
-                                <div className="mb-6">
-                                  <label className="block text-sm font-medium text-gray-700 flex gap-1 items-center mb-2">
+                                {/* Message Type */}
+                                <div>
+                                  <label className="block text-sm font-semibold text-gray-800 mb-2">
                                     Message Type{" "}
                                     <span className="text-red-500">*</span>
                                   </label>
@@ -574,38 +592,38 @@ export function Chat() {
                                     onChange={(e) =>
                                       setMessageType(e.target.value)
                                     }
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
                                   >
                                     <option value="Outgoing">Outgoing</option>
                                     <option value="Incoming">Incoming</option>
                                   </select>
                                 </div>
 
-                                <div className="mb-6">
-                                  <div className="flex items-center">
-                                    <input
-                                      type="checkbox"
-                                      id="closedStatus"
-                                      checked={isClosed}
-                                      onChange={(e) =>
-                                        setIsClosed(e.target.checked)
-                                      }
-                                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                    />
-                                    <label
-                                      htmlFor="closedStatus"
-                                      className="ml-2 block text-sm font-medium text-gray-700 flex gap-1 items-center"
-                                    >
-                                      Mark as Closed
-                                    </label>
-                                  </div>
+                                {/* Mark as Closed */}
+                                <div className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                  <input
+                                    type="checkbox"
+                                    id="closedStatus"
+                                    checked={isClosed}
+                                    onChange={(e) =>
+                                      setIsClosed(e.target.checked)
+                                    }
+                                    className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded cursor-pointer"
+                                  />
+                                  <label
+                                    htmlFor="closedStatus"
+                                    className="ml-3 block text-sm font-medium text-gray-700 cursor-pointer"
+                                  >
+                                    Mark as Closed
+                                  </label>
                                 </div>
 
-                                <div className="flex items-center justify-end space-x-3">
+                                {/* Action Buttons */}
+                                <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
                                   <button
                                     type="button"
                                     onClick={() => setShowResponseForm(false)}
-                                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 flex gap-1 items-center bg-white hover:bg-gray-50 focus:ring-2 focus:ring-gray-500"
+                                    className="px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 transition"
                                   >
                                     Cancel
                                   </button>
@@ -616,7 +634,7 @@ export function Chat() {
                                       !responseDateTime ||
                                       isSubmitting
                                     }
-                                    className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-md hover:shadow-lg"
                                   >
                                     {isSubmitting ? "Adding..." : "Add Response"}
                                   </button>

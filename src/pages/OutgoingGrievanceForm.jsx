@@ -1,37 +1,12 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import apiService from "../services/api";
 
 const OutgoingGrievanceForm = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Breadcrumb logic
-  const segments = location.pathname.split("/").filter(Boolean);
-  const labelMap = { 
-    dashboard: "Dashboard", 
-    grievance: "Grievances", 
-    feedback: "Feedback",
-    "new": "New",
-    "incoming": "Incoming",
-    "outgoing": "Outgoing"
-  };
-  
-  // Special handling for outgoing forms - show Feedback instead of Grievances
-  const getBreadcrumbLabel = (seg, index, segments) => {
-    if (seg === "grievance" && segments.includes("outgoing")) {
-      return "Feedback";
-    }
-    return labelMap[seg] ?? decodeURIComponent(seg);
-  };
-  
-  const crumbs = segments.map((seg, i) => ({ 
-    to: "/" + segments.slice(0, i + 1).join("/"), 
-    label: getBreadcrumbLabel(seg, i, segments)
-  }));
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [status, setStatus] = useState("Pending");
@@ -584,49 +559,6 @@ const OutgoingGrievanceForm = () => {
         <Sidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
           <Navbar />
-          
-          {/* Fixed Breadcrumb */}
-          <div className="">
-            <div className="max-w-7xl mx-auto px-6 py-3">
-              <nav className="flex" aria-label="Breadcrumb">
-                <ol className="inline-flex items-center space-x-1 md:space-x-3">
-                  {/* Home breadcrumb */}
-                  <li className="inline-flex items-center">
-                    <Link to="/dashboard" className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
-                      <svg className="w-3 h-3 mr-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
-                      </svg>
-                      Home
-                    </Link>
-                  </li>
-                  
-                  {/* Dynamic breadcrumbs */}
-                  {crumbs.map((crumb, index) => {
-                    const isLast = index === crumbs.length - 1;
-                    return (
-                      <li key={crumb.to} className="flex items-center">
-                        <svg className="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
-                        </svg>
-                        {isLast ? (
-                          <span className="ml-1 text-sm font-medium text-gray-500 md:ml-2">
-                            {crumb.label}
-                          </span>
-                        ) : (
-                          <Link 
-                            to={crumb.to} 
-                            className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2"
-                          >
-                            {crumb.label}
-                          </Link>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ol>
-              </nav>
-            </div>
-          </div>
 
           {/* Main content */}
           <main className="overflow-auto w-full flex-grow bg-neutral-100">
