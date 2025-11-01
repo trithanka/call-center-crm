@@ -119,7 +119,7 @@ const Sidebar = () => {
                 <div className={`px-6 py-3 flex items-center border-b border-slate-700/30`}>
                     <div className="relative">
                         <div className="w-12 h-12 flex items-center justify-center">
-                            <img src={asdmLogo} alt="Logo" className="size-12 rounded-full mix-blend-plus-lighter" />
+                            <img src={asdmLogo} alt="Logo" className="size-14 rounded-full mix-blend-plus-lighter" />
                         </div>
                     </div>
                     <div className={cn(
@@ -137,14 +137,14 @@ const Sidebar = () => {
                 <div className="py-6 flex-grow overflow-y-auto scrollbar-thin">
                     <div className="px-4">
                         {/* Section Header */}
-                        <div className="mb-4">
+                        {/* <div className="mb-4">
                             <span className={cn(
                                 "text-xs font-bold text-slate-400 uppercase tracking-widest",
                                 navOpen ? 'block' : 'hidden lg:block lg:text-center'
                             )}>
                                 Main
                             </span>
-                        </div>
+                        </div> */}
 
                         {/* Main Navigation */}
                         <ul className="space-y-2">

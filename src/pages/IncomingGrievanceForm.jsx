@@ -802,7 +802,7 @@ const IncomingGrievanceForm = () => {
                             </span>
                           </div>
                           <div>
-                            <h4 className="text-base font-bold text-emerald-800 dark:text-emerald-200">
+                            <h4 className="text-base font-bold text-emerald-800 dark:text-emerald-800">
                               {selectedCandidate.candidateName ||
                                 selectedCandidate.name}
                             </h4>
