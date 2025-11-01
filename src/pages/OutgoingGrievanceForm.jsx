@@ -629,8 +629,8 @@ const OutgoingGrievanceForm = () => {
                               />
                               <div
                                 className="px-4 py-2 rounded border border-gray-300 text-sm transition-all duration-200
-            peer-checked:ring-1 ring-emerald-600 peer-checked:border-emerald-600 peer-checked:font-medium peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/30 
-            peer-checked:text-emerald-700 dark:peer-checked:text-black-300"
+            peer-checked:ring-1 ring-emerald-600 peer-checked:border-emerald-600 peer-checked:font-medium peer-checked:bg-emerald-50 
+            peer-checked:text-emerald-700"
                               >
                                 {role.vsRoleName}
                               </div>
@@ -650,8 +650,8 @@ const OutgoingGrievanceForm = () => {
                   {/* Candidate Search Section */}
                   {showCandidateSearch && (
                     <div className="border-t border-neutral-200 bg-emerald-50">
-                      <div className="border-b border-emerald-100 dark:border-emerald-900 px-6 py-4 flex justify-between items-center">
-                        <h3 className="text-lg font-semibold text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                      <div className="border-b border-emerald-100 px-6 py-4 flex justify-between items-center">
+                        <h3 className="text-lg font-semibold text-emerald-800 flex items-center gap-2">
                           <Lu.LuSearch />
                           Search{" "}
                           {formData.role === "Candidate"
@@ -670,7 +670,7 @@ const OutgoingGrievanceForm = () => {
                               onChange={(e) =>
                                 setCandidateSearchType(e.target.value)
                               }
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                             >
                               <option value="name">Search by Name</option>
                               <option value="mobile">Search by Mobile</option>
@@ -701,7 +701,7 @@ const OutgoingGrievanceForm = () => {
                                   ? "mobile number"
                                   : "ID"
                               }`}
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                             />
                           </div>
 
@@ -740,13 +740,13 @@ const OutgoingGrievanceForm = () => {
                               </h4>
                               <button
                                 onClick={clearSearch}
-                                className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 underline"
+                                className="text-xs text-gray-500 hover:text-gray-700 underline"
                               >
                                 Clear Results
                               </button>
                             </div>
 
-                            <div className="overflow-hidden border border-gray-200 dark:border-neutral-700 shadow-sm max-h-96 overflow-y-auto">
+                            <div className="overflow-hidden border border-gray-200 shadow-sm max-h-96 overflow-y-auto">
                               <table className="w-full text-xs">
                                 <thead className="bg-emerald-200 border-b sticky top-0 self-start">
                                   <tr>
@@ -790,23 +790,23 @@ const OutgoingGrievanceForm = () => {
                                         }
                                       >
                                         {formData.role === "Candidate" && (
-                                          <td className="px-4 py-2 text-gray-900 dark:text-black-900 font-medium whitespace-nowrap">
+                                          <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
                                             {candidate.Id ||
                                               candidate.candidateId}
                                           </td>
                                         )}
-                                        <td className="px-4 py-2 font-semibold text-gray-900 dark:text-black-900 break-words max-w-xs">
+                                        <td className="px-4 py-2 font-semibold text-gray-900 break-words max-w-xs">
                                           {candidate.candidateName ||
                                             candidate.name}
                                         </td>
-                                        <td className="px-4 py-2 text-gray-900 dark:text-black-900 font-medium whitespace-nowrap">
+                                        <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
                                           {candidate.mobile}
                                         </td>
                                         {(formData.role === "Candidate" ||
                                           formData.role === "Training Center" ||
                                           formData.role ===
                                             "Training Partner") && (
-                                          <td className="px-4 py-2 text-gray-900 dark:text-black-900 font-medium whitespace-nowrap">
+                                          <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
                                             {candidate.district}
                                           </td>
                                         )}
@@ -816,7 +816,7 @@ const OutgoingGrievanceForm = () => {
                                               e.stopPropagation();
                                               selectCandidate(candidate);
                                             }}
-                                            className="text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300 font-medium text-xs transition-all"
+                                            className="text-emerald-600 hover:text-emerald-800 font-medium text-xs transition-all"
                                           >
                                             <Lu.LuSquareMousePointer />
                                           </button>
@@ -829,7 +829,7 @@ const OutgoingGrievanceForm = () => {
                             </div>
                           </div>
                         ) : (
-                          <div className="text-center flex flex-col items-center justify-center py-8 border-t border-gray-300 dark:border-neutral-700 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-neutral-800/40">
+                          <div className="text-center flex flex-col items-center justify-center py-8 border-t border-gray-300 text-gray-500 bg-gray-50">
                             <svg
                               className="w-12 h-12 text-gray-300"
                               fill="none"
@@ -890,7 +890,7 @@ const OutgoingGrievanceForm = () => {
                                 : formData.role}{" "}
                               data found
                             </p>
-                            <p className="text-xs text-gray-700 dark:text-gray-400">
+                            <p className="text-xs text-gray-700">
                               Try adjusting your search filters or entering
                               different keywords.
                             </p>
@@ -905,17 +905,17 @@ const OutgoingGrievanceForm = () => {
                     <div className="mb-4 px-6 py-4 border-y border-neutral-300 transition-all bg-emerald-50">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
                         <div className="flex items-center gap-4">
-                          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center shadow-inner">
-                            <span className="text-2xl text-emerald-700 dark:text-emerald-300">
+                          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center shadow-inner">
+                            <span className="text-2xl text-emerald-700">
                               <Lu.LuUser />
                             </span>
                           </div>
                           <div>
-                            <h4 className="text-base font-bold text-emerald-800 dark:text-emerald-800">
+                            <h4 className="text-base font-bold text-emerald-800">
                               {selectedCandidate.candidateName ||
                                 selectedCandidate.name}
                             </h4>
-                            <p className="text-sm text-emerald-700 dark:text-emerald-400 flex flex-wrap items-center gap-2">
+                            <p className="text-sm text-emerald-700 flex flex-wrap items-center gap-2">
                               <span className="">
                                 {selectedCandidate.mobile}
                               </span>
@@ -960,7 +960,7 @@ const OutgoingGrievanceForm = () => {
                                 });
                                 setError({ ...error, name: "" });
                               }}
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                               disabled={
                                 isFormDisabled ||
                                 (selectedCandidate &&
@@ -993,7 +993,7 @@ const OutgoingGrievanceForm = () => {
                               maxLength={10}
                               placeholder="Enter mobile number"
                               required
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                               disabled={
                                 isFormDisabled ||
                                 (selectedCandidate && selectedCandidate.mobile)
@@ -1032,7 +1032,7 @@ const OutgoingGrievanceForm = () => {
                                 });
                                 setError({ ...error, district: "" });
                               }}
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                               disabled={
                                 isLoadingMaster ||
                                 isFormDisabled ||
@@ -1078,7 +1078,7 @@ const OutgoingGrievanceForm = () => {
                                 });
                                 setError({ ...error, address: "" });
                               }}
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                               placeholder="Enter full address"
                               disabled={
                                 isFormDisabled ||
@@ -1112,7 +1112,7 @@ const OutgoingGrievanceForm = () => {
                               // Fetch questions when query type changes
                               fetchQuestions(e.target.value);
                             }}
-                            className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                             disabled={isLoadingMaster || isFormDisabled}
                           >
                             <option value="" selected disabled>
@@ -1321,7 +1321,7 @@ const OutgoingGrievanceForm = () => {
                                 })
                               }
                               rows="4"
-                              className="w-full border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-xs text-gray-900 dark:text-black-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
                               disabled={isFormDisabled}
                             ></textarea>
                             {error.description && (

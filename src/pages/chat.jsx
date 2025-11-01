@@ -662,7 +662,7 @@ export function Chat() {
                       {chatHistory.map((chat) => (
                         <div
                           key={chat.pklCrmChatId}
-                          className="relative flex items-start border-l border-gray-200 dark:border-neutral-700 pl-5 pb-6 last:pb-0"
+                          className="relative flex items-start border-l border-gray-200 pl-5 pb-6 last:pb-0"
                         >
                           {/* Timeline Dot */}
                           <div className="absolute -left-[7.5px] flex items-center justify-center">

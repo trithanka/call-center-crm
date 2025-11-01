@@ -372,7 +372,7 @@ const GrievanceList = () => {
           </div>
 
           {/* Right Side - Filter Dropdowns */}
-          <div className="flex flex-wrap gap-1 border border-gray-300 rounded-md shadow-lg">
+          <div className="flex flex-wrap gap-1">
             {/* Role Filter */}
             <div className="relative">
               <button
@@ -536,7 +536,7 @@ const GrievanceList = () => {
                     >
                       All Districts
                     </button>
-                    {masterData.district?.map((district) => (
+                    {masterData.district?.filter((district) => district.fklStateId === 4).map((district) => (
                       <button
                         key={district.pklDistrictId}
                         onClick={() => {
