@@ -71,7 +71,7 @@ export function Chat() {
 
         const result = await apiService.getChatData(pklCrmUserId);
         setChatData(result.data);
-        
+
         // Update breadcrumb with ticket number if available
         if (result.data?.initial?.[0]?.vsTicketId) {
           updateMetadata({ ticketNumber: result.data.initial[0].vsTicketId });
@@ -86,7 +86,7 @@ export function Chat() {
     if (pklCrmUserId) {
       fetchChatData();
     }
-    
+
     // Clean up metadata when component unmounts
     return () => {
       clearMetadata();
@@ -403,8 +403,8 @@ export function Chat() {
                             {/* Phone */}
                             <div className="flex justify-between py-2 border-b border-gray-200">
                               <span className="font-medium text-gray-600 flex gap-1.5 items-center">
-                                <Lu.LuPhone className="text-emerald-600" /> Phone
-                                No.
+                                <Lu.LuPhone className="text-emerald-600" />{" "}
+                                Phone No.
                               </span>
                               <span className="text-gray-800 font-medium">
                                 {initialQuery.vsMobile || "N/A"}
@@ -464,19 +464,25 @@ export function Chat() {
 
                       {/* Timestamp and action */}
                       <div className="w-full flex items-center justify-between py-3">
-                        <p className="text-xs text-gray-600 italic text-xs">
-                          NOTE: This is a active{" "}
-                          {initialQuery.vsEntryType?.toLowerCase() === "outgoing"
-                            ? "feedback"
-                            : "grievance"}
-                          . Please respond to the
-                          {initialQuery.vsEntryType?.toLowerCase() === "outgoing"
-                            ? "feedback"
-                            : "grievance"}{" "}
-                          as soon as possible.
-                        </p>
-                        
-{/* Add Response Button - Fixed at bottom, always visible */}
+                        {initialQuery.vsStatus !== "Closed" ? (
+                          <>
+                            <p className="text-xs text-gray-600 italic">
+                              NOTE: This is an active{" "}
+                              {initialQuery.vsEntryType?.toLowerCase() ===
+                              "outgoing"
+                                ? "feedback"
+                                : "grievance"}
+                              . Please respond to the{" "}
+                              {initialQuery.vsEntryType?.toLowerCase() ===
+                              "outgoing"
+                                ? "feedback"
+                                : "grievance"}{" "}
+                              as soon as possible.
+                            </p>
+                          </>
+                        ) : (<><p></p> </>)}
+
+                        {/* Add Response Button - Fixed at bottom, always visible */}
                         <div className="">
                           {initialQuery.vsStatus !== "Closed" &&
                           initialQuery.vsEntryType !== "outgoing" ? (
@@ -516,7 +522,8 @@ export function Chat() {
                                       Add Your Response
                                     </h3>
                                     <p className="text-sm text-emerald-50 mt-1">
-                                      Share your thoughts and keep the conversation going
+                                      Share your thoughts and keep the
+                                      conversation going
                                     </p>
                                   </div>
                                   <button
@@ -636,7 +643,9 @@ export function Chat() {
                                     }
                                     className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-md hover:shadow-lg"
                                   >
-                                    {isSubmitting ? "Adding..." : "Add Response"}
+                                    {isSubmitting
+                                      ? "Adding..."
+                                      : "Add Response"}
                                   </button>
                                 </div>
                               </div>
@@ -764,10 +773,7 @@ export function Chat() {
 
                     <div className="divide-y border-gray-200">
                       {chatData.questions.map((question, index) => (
-                        <div
-                          key={question.fklQuestionId}
-                          className="p-4"
-                        >
+                        <div key={question.fklQuestionId} className="p-4">
                           <div className="flex items-start gap-3">
                             <div className="flex-shrink-0 rounded-full flex items-center justify-center text-xs font-semibold text-emerald-700 mt-1">
                               {index + 1}.
@@ -779,8 +785,7 @@ export function Chat() {
 
                               {/* Response Display */}
                               <div className="flex items-center gap-3">
-                                {question.questionType ===
-                                "multipleChoice" ? (
+                                {question.questionType === "multipleChoice" ? (
                                   <div className="flex items-center gap-2">
                                     <span className="text-sm font-medium text-gray-600">
                                       Response:
@@ -863,7 +868,7 @@ export function Chat() {
                                 question.vsResponseComment.trim() && (
                                   <div className="mt-3 p-2 bg-gray-50 rounded-lg border-l-4 border-emerald-600">
                                     <div className="flex items-start gap-2">
-                                      <Lu.LuInfo className="mt-0.5"/>
+                                      <Lu.LuInfo className="mt-0.5" />
                                       <div>
                                         <p className="text-sm font-medium text-gray-700 flex gap-1 items-center mb-1">
                                           Additional Comment:

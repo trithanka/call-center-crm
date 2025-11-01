@@ -1385,11 +1385,11 @@ const OutgoingGrievanceForm = () => {
                                   isLoadingMaster ||
                                   isFormDisabled
                                 }
-                                className={`bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-xs flex gap-1 ${
+                                className={`bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-xs flex gap-1 ${
                                   isSubmitting ||
                                   isLoadingMaster ||
                                   isFormDisabled
-                                    ? "bg-emerald-600/50 cursor-not-allowed"
+                                    ? "bg-red-600/50 cursor-not-allowed"
                                     : ""
                                 }`}
                               >
