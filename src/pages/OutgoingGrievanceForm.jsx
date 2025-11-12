@@ -279,6 +279,15 @@ const OutgoingGrievanceForm = () => {
     setSelectedCandidate(null);
   };
 
+  // Helper function to parse options string (format: "optionId:optionValue||optionId:optionValue")
+  const parseQuestionOptions = (optionsString) => {
+    if (!optionsString) return [];
+    return optionsString.split('||').map(option => {
+      const [optionId, optionValue] = option.split(':');
+      return { id: optionId, value: optionValue };
+    });
+  };
+
   // Fetch questions when query type changes
   const fetchQuestions = async (queryType) => {
     if (!queryType || !formData.role) return;
@@ -481,7 +490,8 @@ const OutgoingGrievanceForm = () => {
           formattedQuestionResponses[questionId] = {
             questionId: parseInt(questionId),
             response: response.response,
-            responseComment: response.comment || ''
+            responseComment: response.comment || '',
+            optionId: response.optionId ? parseInt(response.optionId) : null
           };
         }
       });
@@ -1299,6 +1309,58 @@ const OutgoingGrievanceForm = () => {
                                   placeholder="Type your response here..."
                                 />
                               </div>
+                            )}
+
+                            {/* Question Type 4: Multiple Choice with options from database */}
+                            {question.bQuestionType === "4" && (
+                              <>
+                                <div className="flex flex-col gap-3 mb-3">
+                                  {parseQuestionOptions(question.options).map((option) => (
+                                    <label key={option.id} className="flex items-center">
+                                      <input
+                                        type="radio"
+                                        name={`question_${question.pklQuestionId}`}
+                                        value={option.value}
+                                        data-option-id={option.id}
+                                        checked={questionResponses[question.pklQuestionId]?.response === option.value}
+                                        onChange={(e) => {
+                                          const selectedOptionId = e.target.getAttribute('data-option-id');
+                                          setQuestionResponses(prev => ({
+                                            ...prev,
+                                            [question.pklQuestionId]: {
+                                              ...prev[question.pklQuestionId],
+                                              response: e.target.value,
+                                              optionId: selectedOptionId
+                                            }
+                                          }));
+                                        }}
+                                        className="mr-2"
+                                      />
+                                      <span className="text-sm">{option.value}</span>
+                                    </label>
+                                  ))}
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                                    Comments (Optional)
+                                  </label>
+                                  <textarea
+                                    value={questionResponses[question.pklQuestionId]?.comment || ''}
+                                    onChange={(e) => {
+                                      setQuestionResponses(prev => ({
+                                        ...prev,
+                                        [question.pklQuestionId]: {
+                                          ...prev[question.pklQuestionId],
+                                          comment: e.target.value
+                                        }
+                                      }));
+                                    }}
+                                    rows="2"
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                    placeholder="Add your comments here..."
+                                  />
+                                </div>
+                              </>
                             )}
                           </div>
                         </div>
