@@ -7,6 +7,7 @@ import GrievanceChat from "./pages/GrievanceChat";
 import Dashboard from "./components/Dashboard";
 import Grievance from "./pages/Grievance";
 import Feedback from "./pages/Feedback";
+import QuestionsManagement from "./pages/QuestionsManagement";
 import { Chat } from "./pages/chat";
 import IncomingGrievanceForm from "./pages/IncomingGrievanceForm";
 import OutgoingGrievanceForm from "./pages/OutgoingGrievanceForm";
@@ -43,6 +44,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Feedback/>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/questions" 
+          element={
+            <ProtectedRoute>
+              <QuestionsManagement/>
             </ProtectedRoute>
           } 
         />
