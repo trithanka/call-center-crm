@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import apiService from "../services/api";
 import GrievanceTypeDialog from "./GrievanceTypeDialog";
+import * as Lu from "react-icons/lu";
 
 const FeedbackList = () => {
   const navigate = useNavigate();
@@ -383,9 +384,8 @@ const FeedbackList = () => {
               >
                 <span>{filters.userRole || "All Roles"}</span>
                 <svg
-                  className={`w-3 h-3 transition-transform ${
-                    openDropdown === "role" ? "rotate-180" : ""
-                  }`}
+                  className={`w-3 h-3 transition-transform ${openDropdown === "role" ? "rotate-180" : ""
+                    }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -406,9 +406,8 @@ const FeedbackList = () => {
                         handleFilterChange("userRole", "");
                         setOpenDropdown(null);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${
-                        !filters.userRole ? "bg-blue-50 text-blue-700" : ""
-                      }`}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${!filters.userRole ? "bg-blue-50 text-blue-700" : ""
+                        }`}
                     >
                       All Roles
                     </button>
@@ -419,11 +418,10 @@ const FeedbackList = () => {
                           handleFilterChange("userRole", role.vsRoleName);
                           setOpenDropdown(null);
                         }}
-                        className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${
-                          filters.userRole === role.vsRoleName
-                            ? "bg-blue-50 text-blue-700"
-                            : ""
-                        }`}
+                        className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${filters.userRole === role.vsRoleName
+                          ? "bg-blue-50 text-blue-700"
+                          : ""
+                          }`}
                       >
                         {role.vsRoleName}
                       </button>
@@ -445,9 +443,8 @@ const FeedbackList = () => {
               >
                 <span>{filters.queryType || "All Types"}</span>
                 <svg
-                  className={`w-3 h-3 transition-transform ${
-                    openDropdown === "queryType" ? "rotate-180" : ""
-                  }`}
+                  className={`w-3 h-3 transition-transform ${openDropdown === "queryType" ? "rotate-180" : ""
+                    }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -468,9 +465,8 @@ const FeedbackList = () => {
                         handleFilterChange("queryType", "");
                         setOpenDropdown(null);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${
-                        !filters.queryType ? "bg-blue-50 text-blue-700" : ""
-                      }`}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${!filters.queryType ? "bg-blue-50 text-blue-700" : ""
+                        }`}
                     >
                       All Types
                     </button>
@@ -481,11 +477,10 @@ const FeedbackList = () => {
                           handleFilterChange("queryType", type.vsQueryType);
                           setOpenDropdown(null);
                         }}
-                        className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${
-                          filters.queryType === type.vsQueryType
-                            ? "bg-blue-50 text-blue-700"
-                            : ""
-                        }`}
+                        className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${filters.queryType === type.vsQueryType
+                          ? "bg-blue-50 text-blue-700"
+                          : ""
+                          }`}
                       >
                         {type.vsQueryType}
                       </button>
@@ -507,9 +502,8 @@ const FeedbackList = () => {
               >
                 <span>{filters.district || "All Districts"}</span>
                 <svg
-                  className={`w-3 h-3 transition-transform ${
-                    openDropdown === "district" ? "rotate-180" : ""
-                  }`}
+                  className={`w-3 h-3 transition-transform ${openDropdown === "district" ? "rotate-180" : ""
+                    }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -530,9 +524,8 @@ const FeedbackList = () => {
                         handleFilterChange("district", "");
                         setOpenDropdown(null);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${
-                        !filters.district ? "bg-blue-50 text-blue-700" : ""
-                      }`}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${!filters.district ? "bg-blue-50 text-blue-700" : ""
+                        }`}
                     >
                       All Districts
                     </button>
@@ -546,11 +539,10 @@ const FeedbackList = () => {
                           );
                           setOpenDropdown(null);
                         }}
-                        className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${
-                          filters.district === district.vsDistrictName
-                            ? "bg-blue-50 text-blue-700"
-                            : ""
-                        }`}
+                        className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${filters.district === district.vsDistrictName
+                          ? "bg-blue-50 text-blue-700"
+                          : ""
+                          }`}
                       >
                         {district.vsDistrictName}
                       </button>
@@ -574,13 +566,12 @@ const FeedbackList = () => {
                   {filters.isUnanswered === ""
                     ? "All"
                     : filters.isUnanswered === "0"
-                    ? "Answered"
-                    : "Unanswered"}
+                      ? "Answered"
+                      : "Unanswered"}
                 </span>
                 <svg
-                  className={`w-3 h-3 transition-transform ${
-                    openDropdown === "isUnanswered" ? "rotate-180" : ""
-                  }`}
+                  className={`w-3 h-3 transition-transform ${openDropdown === "isUnanswered" ? "rotate-180" : ""
+                    }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -601,9 +592,8 @@ const FeedbackList = () => {
                         handleFilterChange("isUnanswered", "");
                         setOpenDropdown(null);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${
-                        !filters.isUnanswered ? "bg-blue-50 text-blue-700" : ""
-                      }`}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${!filters.isUnanswered ? "bg-blue-50 text-blue-700" : ""
+                        }`}
                     >
                       All
                     </button>
@@ -612,11 +602,10 @@ const FeedbackList = () => {
                         handleFilterChange("isUnanswered", "0");
                         setOpenDropdown(null);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${
-                        filters.isUnanswered === "0"
-                          ? "bg-blue-50 text-blue-700"
-                          : ""
-                      }`}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${filters.isUnanswered === "0"
+                        ? "bg-blue-50 text-blue-700"
+                        : ""
+                        }`}
                     >
                       Answered
                     </button>
@@ -625,11 +614,10 @@ const FeedbackList = () => {
                         handleFilterChange("isUnanswered", "1");
                         setOpenDropdown(null);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${
-                        filters.isUnanswered === "1"
-                          ? "bg-blue-50 text-blue-700"
-                          : ""
-                      }`}
+                      className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${filters.isUnanswered === "1"
+                        ? "bg-blue-50 text-blue-700"
+                        : ""
+                        }`}
                     >
                       Unanswered
                     </button>
@@ -670,161 +658,172 @@ const FeedbackList = () => {
       {grievances.length > 0 ? (
         <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
 
-  {/* Table */}
-  <div className="overflow-x-auto">
-    <table className="w-full text-xs">
-      <thead className="bg-white">
-        <tr className="border-b border-gray-200">
-          {[
-            "#",
-            "Ticket ID",
-            "Name",
-            "Mobile",
-            "Role",
-            "Query Type",
-            "Date",
-            "Answered",
-            "",
-          ].map((header, idx) => (
-            <th
-              key={idx}
-              className="px-4 py-4 text-left text-[0.65rem] font-semibold text-gray-500 uppercase tracking-wider"
-            >
-              {header}
-            </th>
-          ))}
-        </tr>
-      </thead>
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead className="bg-white">
+                <tr className="border-b border-gray-200">
+                  {[
+                    "#",
+                    "Ticket ID",
+                    "Name",
+                    "Mobile",
+                    "Role",
+                    "Query Type",
+                    "Date",
+                    "Answered",
+                    "",
+                  ].map((header, idx) => (
+                    <th
+                      key={idx}
+                      className="px-4 py-4 text-left text-[0.65rem] font-semibold text-gray-500 uppercase tracking-wider"
+                    >
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
 
-      <tbody className="divide-y divide-gray-100">
-        {grievances.length > 0 ? (
-          grievances.map((item, index) => (
-            <tr
-              key={item.pklCrmUserId}
-              className="hover:bg-neutral-100/70 transition-colors duration-200"
-            >
-              <td className="px-4 py-3 text-gray-700">
-                {(currentPage - 1) * pageSize + index + 1}
-              </td>
+              <tbody className="divide-y divide-gray-100">
+                {grievances.length > 0 ? (
+                  grievances.map((item, index) => (
+                    <tr
+                      key={item.pklCrmUserId}
+                      className="hover:bg-neutral-100/70 transition-colors duration-200"
+                    >
+                      <td className="px-4 py-3 text-gray-700">
+                        {(currentPage - 1) * pageSize + index + 1}
+                      </td>
 
-              <td className="px-4 py-3 text-blue-700">
-                #{item.vsTicketId || "N/A"}
-              </td>
+                      <td className="px-4 py-3 text-blue-700">
+                        #{item.vsTicketId || "N/A"}
+                      </td>
 
-              <td className="px-4 py-3 text-gray-800 font-semibold">
-                {item.vsUserName || "N/A"}
-              </td>
+                      <td className="px-4 py-3 text-gray-800 font-semibold">
+                        {item.vsUserName || "N/A"}
+                      </td>
 
-              <td className="px-4 py-3 text-gray-600">
-                {item.vsMobile || "N/A"}
-              </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {item.vsMobile || "N/A"}
+                      </td>
 
-              <td className="px-4 py-3 text-gray-700">
-                {item.vsRoleName || "N/A"}
-              </td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {item.vsRoleName || "N/A"}
+                      </td>
 
-              <td className="px-4 py-3 text-gray-700">
-                {item.vsQueryType || "N/A"}
-              </td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {item.vsQueryType || "N/A"}
+                      </td>
 
-              <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
-                {formatDate(item.vsEntryDateTime)}
-              </td>
+                      <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                        {formatDate(item.vsEntryDateTime)}
+                      </td>
 
-              <td className="px-4 py-3">
-                <span
-                  className={`${
-                    item.bIsUnanswered === 0 || item.bIsUnanswered === "0"
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {item.bIsUnanswered === 0 || item.bIsUnanswered === "0"
-                    ? "Yes"
-                    : "No"}
-                </span>
-              </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`${item.bIsUnanswered === 0 || item.bIsUnanswered === "0"
+                            ? "text-green-600"
+                            : "text-red-600"
+                            }`}
+                        >
+                          {item.bIsUnanswered === 0 || item.bIsUnanswered === "0"
+                            ? "Yes"
+                            : "No"}
+                        </span>
+                      </td>
 
-              <td className="px-4 py-3 text-center">
-                <Link
-                  to={`/chats?id=${item.pklCrmUserId}&source=feedback`}
-                  className="inline-flex items-center justify-center text-gray-500 hover:text-blue-600 transition-colors duration-150"
-                  title="View Ticket"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-3 h-3"
+                      <td className="px-4 py-3 text-center">
+                        <Link
+                          to={`/chats?id=${item.pklCrmUserId}&source=feedback`}
+                          className="inline-flex items-center justify-center text-gray-500 hover:text-blue-600 transition-colors duration-150"
+                          title="View Ticket"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="w-3 h-3"
+                          >
+                            <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
+                            <path d="m21 3-9 9" />
+                            <path d="M15 3h6v6" />
+                          </svg>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="9"
+                      className="px-6 py-8 text-center text-gray-500 italic bg-gray-50"
+                    >
+                      No feedback found. 🌿 Everything's calm for now.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 0 && (
+            <div className="px-4 py-3 border-t border-gray-100 flex flex-wrap items-center justify-between">
+
+              {/* Results Summary - Only show when there are feedback entries */}
+              {grievances.length > 0 && (
+                <div className="text-xs text-gray-600">
+                  Showing <span className="font-semibold">{grievances.length}</span> of <span className="font-semibold">{totalCount}</span> entries
+                  {filters.isUnanswered && (
+                    <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                      {filters.isUnanswered === "0" ? "Answered" : "Unanswered"}
+                    </span>
+                  )}
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mr-2">
+                  <span className="text-xs text-gray-600">Lines per page:</span>
+                  <select
+                    value={pageSize}
+                    onChange={(e) => handlePageSizeChange(parseInt(e.target.value))}
+                    className="border border-gray-300 rounded-md p-0.5 text-[.7rem] focus:outline-none focus:ring-1 focus:ring-blue-400"
                   >
-                    <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
-                    <path d="m21 3-9 9" />
-                    <path d="M15 3h6v6" />
-                  </svg>
-                </Link>
-              </td>
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td
-              colSpan="9"
-              className="px-6 py-8 text-center text-gray-500 italic bg-gray-50"
-            >
-              No feedback found. 🌿 Everything's calm for now.
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
-  </div>
+                    {[10, 25, 50, 100].map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 rounded-md text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm transition-all"
+                >
+                  <Lu.LuChevronLeft />
 
-  {/* Pagination */}
-  {totalPages > 1 && (
-    <div className="px-4 py-3 border-t border-gray-100 bg-gray-50 flex flex-wrap items-center justify-between">
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-gray-600">Rows per page:</span>
-        <select
-          value={pageSize}
-          onChange={(e) => handlePageSizeChange(parseInt(e.target.value))}
-          className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
-        >
-          {[10, 25, 50, 100].map((num) => (
-            <option key={num} value={num}>
-              {num}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-3 py-1.5 border border-gray-300 rounded-md text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm transition-all"
-        >
-          Previous
-        </button>
-        <span className="text-xs text-gray-600">
-          Page <span className="font-semibold">{currentPage}</span> of{" "}
-          <span className="font-semibold">{totalPages}</span>
-        </span>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-3 py-1.5 border border-gray-300 rounded-md text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm transition-all"
-        >
-          Next
-        </button>
-      </div>
-    </div>
-  )}
+                </button>
+                <span className="text-xs text-gray-600">
+                  Page <span className="font-semibold">{currentPage}</span> of{" "}
+                  <span className="font-semibold">{totalPages}</span>
+                </span>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 rounded-md text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm transition-all"
+                >
+                  <Lu.LuChevronRight />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         /* No Data Found Section */
@@ -875,18 +874,6 @@ const FeedbackList = () => {
               </p>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Results Summary - Only show when there are feedback entries */}
-      {grievances.length > 0 && (
-        <div className="mt-4 text-xs text-gray-600">
-          Showing {grievances.length} of {totalCount} feedback entries
-          {filters.isUnanswered && (
-            <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-              {filters.isUnanswered === "0" ? "Answered" : "Unanswered"}
-            </span>
-          )}
         </div>
       )}
 

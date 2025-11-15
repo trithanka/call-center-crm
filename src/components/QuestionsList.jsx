@@ -100,11 +100,7 @@ const QuestionsList = ({
           <div className="flex-1">
             <div className="flex gap-2 relative">
               <span className="absolute left-0 top-0 bottom-0 flex items-center px-2 text-gray-500">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
+                <Lu.LuSearch />
               </span>
 
               <input
@@ -112,13 +108,13 @@ const QuestionsList = ({
                 value={filters.search}
                 onChange={(e) => onFilterChange("search", e.target.value)}
                 placeholder="Search questions..."
-                className="flex-1 border border-gray-300 rounded-md px-3 py-2 pl-8 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 max-w-72"
+                className="flex-1 border border-gray-300 rounded-md px-3 py-2 pl-8 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 max-w-72"
               />
             </div>
           </div>
 
           {/* FILTERS */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1">
 
             {/* Role */}
             <DropdownFilter
@@ -300,58 +296,61 @@ const QuestionsList = ({
               </div>
 
               {/* PAGINATION */}
-              <div className="px-4 py-3 border-t bg-neutral-50 flex justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <span>Rows per page:</span>
+              {totalPages > 0 && (
+            <div className="px-4 py-3 border-t border-gray-100 flex flex-wrap items-center justify-between">
+
+              {/* Results Summary - Only show when there are feedback entries */}
+              {questions.length > 0 && (
+                <div className="text-xs text-gray-600">
+                  Showing <span className="font-semibold">{questions.length}</span> of <span className="font-semibold">{totalCount}</span> entries
+                  {filters.isUnanswered && (
+                    <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                      {filters.isUnanswered === "0" ? "Answered" : "Unanswered"}
+                    </span>
+                  )}
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mr-2">
+                  <span className="text-xs text-gray-600">Lines per page:</span>
                   <select
                     value={pageSize}
-                    onChange={(e) => setPageSize(Number(e.target.value))}
-                    className="border rounded px-2 py-1"
+                    onChange={(e) => handlePageSizeChange(parseInt(e.target.value))}
+                    className="border border-gray-300 rounded-md p-0.5 text-[.7rem] focus:outline-none focus:ring-1 focus:ring-blue-400"
                   >
-                    {[10, 25, 50, 100].map((size) => (
-                      <option key={size} value={size}>{size}</option>
+                    {[10, 25, 50, 100].map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
                     ))}
                   </select>
                 </div>
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 rounded-md text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm transition-all"
+                >
+                  <Lu.LuChevronLeft />
 
-                <div className="flex items-center gap-2">
-                  <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                    className="px-3 py-1 border rounded disabled:opacity-40"
-                  >
-                    Prev
-                  </button>
-
-                  <span>
-                    Page <b>{currentPage}</b> of <b>{totalPages}</b>
-                  </span>
-
-                  <button
-                    disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                    className="px-3 py-1 border rounded disabled:opacity-40"
-                  >
-                    Next
-                  </button>
-                </div>
+                </button>
+                <span className="text-xs text-gray-600">
+                  Page <span className="font-semibold">{currentPage}</span> of{" "}
+                  <span className="font-semibold">{totalPages}</span>
+                </span>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 rounded-md text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm transition-all"
+                >
+                  <Lu.LuChevronRight />
+                </button>
               </div>
+            </div>
+          )}
             </div>
           </>
         )}
       </div>
-
-      {/* FOOTER SUMMARY */}
-      {totalCount > 0 && (
-        <div className="mt-4 text-xs text-neutral-600">
-          Showing {questions.length} of {totalCount} questions
-          {!isResetDisabled && (
-            <span className="ml-2 px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full">
-              Filters Applied
-            </span>
-          )}
-        </div>
-      )}
     </>
   );
 };

@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import QuestionsList from "../components/QuestionsList";
 import apiService from "../services/api";
+import * as Lu from "react-icons/lu";
 
 // Default fallback master data
 const DEFAULT_ROLES = [
@@ -25,9 +26,9 @@ const DEFAULT_QUERY_TYPES = [
 
 const QUESTION_TYPE_OPTIONS = [
   { value: "all", label: "All" },
-  { value: "1", label: "Binary" },
-  { value: "2", label: "Text" },
-  { value: "3", label: "Number" },
+  { value: "1", label: "YesNo" },
+  { value: "2", label: "Comment" },
+  { value: "3", label: "Rating" },
   { value: "4", label: "Choice" },
 ];
 
@@ -209,24 +210,31 @@ const QuestionsManagement = () => {
     }
 
     const payload = {
-      userRoleId: Number(questionForm.roleId),
-      queryTypeId: Number(questionForm.queryTypeId),
-      vsInteractionQuestion: questionForm.vsInteractionQuestion,
-      bQuestionType: questionForm.bQuestionType,
-      options: isChoice
-        ? questionForm.options.map((o) => `${o.id}:${o.value}`).join("||")
-        : "",
+      userRole: Number(questionForm.roleId),
+      queryType: Number(questionForm.queryTypeId),
+      interactionQuestion: questionForm.vsInteractionQuestion,
+      questionType: questionForm.bQuestionType,
+      optionValue: isChoice
+        ? questionForm.options.map((o) => o.value)
+        : [],
+
     };
+    if((payload?.optionValue ?? []).length==0){
+      return toast.error("Add choices to continue."); 
+    }
 
     if (editingQuestionId) payload.questionId = editingQuestionId;
-
+    console.log(payload);
+    // return 0;
     try {
       const res = editingQuestionId
         ? await apiService.updateQuestion(payload)
         : await apiService.createQuestion(payload);
 
-      if (res.status === "true") {
-        toast.success(editingQuestionId ? "Updated" : "Created");
+      if (res?.status === "success") {
+        // toast.success(editingQuestionId ? "Updated" : "Created");
+        toast.success(res?.message);
+
 
         closeQuestionForm();
         setCurrentPage(1);
@@ -258,7 +266,7 @@ const QuestionsManagement = () => {
                   onClick={openCreateModal}
                   className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-xs"
                 >
-                  Create Question
+                  Create New Question
                 </button>
               </div>
 
@@ -285,20 +293,20 @@ const QuestionsManagement = () => {
       </div>
 
       {showQuestionForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9998] top-0 left-0">
           {/* Modal */}
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto overflow-hidden">
+            <div className="px-6 py-4 border-b">
               <h3 className="text-lg font-semibold">
-                {editingQuestionId ? "Edit Question" : "Create Question"}
+                {editingQuestionId ? "Edit Question" : "New Question"}
               </h3>
             </div>
 
-            <div className="p-6 space-y-4">
+            <div className="px-6 py-4 space-y-2">
               {/* Form fields */}
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-2 md:grid-cols-3">
                 <div>
-                  <label className="block text-sm mb-1">Role *</label>
+                  <label className="block text-sm font-medium text-gray-800">Role <span className="text-red-500">*</span></label>
                   <select
                     value={questionForm.roleId}
                     onChange={(e) =>
@@ -307,7 +315,7 @@ const QuestionsManagement = () => {
                         roleId: e.target.value,
                       })
                     }
-                    className="w-full border px-3 py-2 rounded-md"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   >
                     <option value="">-- Select Role --</option>
                     {masterData.roles.map((role) => (
@@ -319,7 +327,7 @@ const QuestionsManagement = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm mb-1">Query Type *</label>
+                  <label className="block text-sm font-medium text-gray-800">Category <span className="text-red-500">*</span></label>
                   <select
                     value={questionForm.queryTypeId}
                     onChange={(e) =>
@@ -328,9 +336,9 @@ const QuestionsManagement = () => {
                         queryTypeId: e.target.value,
                       })
                     }
-                    className="w-full border px-3 py-2 rounded-md"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   >
-                    <option value="">-- Select Query Type --</option>
+                    <option value="">-- Select Category --</option>
                     {masterData.queryTypes.map((type) => (
                       <option
                         key={type.pklQueryTypeId}
@@ -341,13 +349,33 @@ const QuestionsManagement = () => {
                     ))}
                   </select>
                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-800">Type <span className="text-red-500">*</span></label>
+                  <select
+                    value={questionForm.bQuestionType}
+                    onChange={(e) =>
+                      setQuestionForm({
+                        ...questionForm,
+                        bQuestionType: e.target.value,
+                        options: e.target.value === "4" ? questionForm.options : [],
+                      })
+                    }
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  >
+                    <option value="1">YesNo</option>
+                    <option value="2">Comment</option>
+                    <option value="3">Rating</option>
+                    <option value="4">Choice</option>
+                  </select>
+                </div>
               </div>
 
               <div>
-                <label className="block text-sm mb-1">Question *</label>
+                <label className="block text-sm font-medium text-gray-800">Question <span className="text-red-500">*</span></label>
                 <textarea
-                  className="w-full border rounded-md px-3 py-2"
-                  rows="3"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  rows="4"
                   value={questionForm.vsInteractionQuestion}
                   onChange={(e) =>
                     setQuestionForm({
@@ -358,49 +386,16 @@ const QuestionsManagement = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm mb-1">Type *</label>
-                <select
-                  value={questionForm.bQuestionType}
-                  onChange={(e) =>
-                    setQuestionForm({
-                      ...questionForm,
-                      bQuestionType: e.target.value,
-                      options: e.target.value === "4" ? questionForm.options : [],
-                    })
-                  }
-                  className="w-full border px-3 py-2 rounded-md"
-                >
-                  <option value="1">Binary</option>
-                  <option value="2">Text</option>
-                  <option value="3">Number</option>
-                  <option value="4">Choice</option>
-                </select>
-              </div>
-
               {questionForm.bQuestionType === "4" && (
                 <div>
                   <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium">Options *</span>
-                    <button
-                      onClick={() =>
-                        setQuestionForm({
-                          ...questionForm,
-                          options: [
-                            ...questionForm.options,
-                            { id: "", value: "" },
-                          ],
-                        })
-                      }
-                      className="text-emerald-600 text-sm"
-                    >
-                      + Add Option
-                    </button>
+                    <span className="text-sm font-medium">Options <span className="text-red-500">*</span></span>
                   </div>
 
                   <div className="space-y-2">
                     {questionForm.options.map((opt, index) => (
-                      <div key={index} className="flex gap-2">
+                      <div key={index} className="flex items-center gap-2">
+                        <span className="text-gray-300"><Lu.LuCircle /></span>
                         <input
                           type="text"
                           value={opt.value}
@@ -412,7 +407,7 @@ const QuestionsManagement = () => {
                               options: updated,
                             });
                           }}
-                          className="flex-1 border rounded px-3 py-2"
+                          className="border border-gray-300 rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full"
                           placeholder={`Option ${index + 1}`}
                         />
 
@@ -426,12 +421,30 @@ const QuestionsManagement = () => {
                               options: updated,
                             });
                           }}
-                          className="text-red-600 border rounded px-2 py-1"
+                          className="text-gray-400 hover:text-red-600  rounded px-2 py-1"
                         >
-                          Remove
+                          <Lu.LuDelete />
                         </button>
                       </div>
                     ))}
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-300"><Lu.LuCircle /></span>
+
+                      <button
+                        onClick={() =>
+                          setQuestionForm({
+                            ...questionForm,
+                            options: [
+                              ...questionForm.options,
+                              { id: "", value: "" },
+                            ],
+                          })
+                        }
+                        className="text-blue-500 rounded px-2 py-1 text-xs underline"
+                      >
+                        Add Option
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -439,13 +452,13 @@ const QuestionsManagement = () => {
               <div className="flex justify-end gap-3 border-t pt-4">
                 <button
                   onClick={closeQuestionForm}
-                  className="border px-4 py-2 rounded-md"
+                  className="border px-4 py-2 rounded-md text-xs hover:bg-gray-100"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveQuestion}
-                  className="px-4 py-2 bg-emerald-600 text-white rounded-md"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-xs"
                 >
                   {editingQuestionId ? "Update" : "Create"}
                 </button>

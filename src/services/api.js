@@ -261,7 +261,7 @@ class ApiService {
       body: JSON.stringify(questionData)
     };
 
-    return this.authenticatedRequest('/nw/master/create/question', requestOptions);
+    return this.authenticatedRequest('/nw/question-mangager/add-questions', requestOptions);
   }
 
   // Update question method

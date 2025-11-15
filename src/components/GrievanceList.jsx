@@ -760,36 +760,22 @@ const GrievanceList = () => {
                   title="View Ticket"
                 >
                   
-              <svg
-                className="w-32 h-32 text-gray-300"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* Folder */}
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1}
-                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                />
-                {/* Sad Face */}
-                <g transform="translate(8, 10)">
-                  {/* Left Eye */}
-                  <circle cx="2.5" cy="3" r="0.3" fill="currentColor" />
-                  {/* Right Eye */}
-                  <circle cx="5.5" cy="3" r="0.3" fill="currentColor" />
-                  {/* Sad Mouth (frown) */}
-                  <path
-                    d="M2.5 5.5 Q4 4.5 5.5 5.5"
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth={0.8}
+                    strokeWidth="2"
                     strokeLinecap="round"
-                  />
-                </g>
-              </svg>
+                    strokeLinejoin="round"
+                    className="w-3 h-3"
+                  >
+                    <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
+                    <path d="m21 3-9 9" />
+                    <path d="M15 3h6v6" />
+                  </svg>
                 </Link>
               </td>
             </tr>
@@ -810,7 +796,7 @@ const GrievanceList = () => {
 
   {/* Pagination */}
   {totalPages > 1 && (
-    <div className="px-4 py-3 border-t border-gray-100 bg-gray-50 flex flex-wrap items-center justify-between">
+    <div className="px-4 py-3 border-t border-gray-100 flex flex-wrap items-center justify-between">
       <div className="flex items-center gap-2">
         <span className="text-xs text-gray-600">Rows per page:</span>
         <select
