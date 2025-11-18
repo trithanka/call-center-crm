@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import QuestionsList from "../components/QuestionsList";
 import apiService from "../services/api";
+import Swal from "sweetalert2";
 import * as Lu from "react-icons/lu";
 
 // Default fallback master data
@@ -181,20 +182,34 @@ const QuestionsManagement = () => {
 
   // Delete
   const handleDeleteQuestion = async (id) => {
-    if (!window.confirm("Delete this question?")) return;
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won’t be able to undo this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, delete it!",
+    cancelButtonText: "Cancel",
+  }).then(async (result) => {   // <-- Make callback async
+    if (result.isConfirmed) {
+      try {
+        const res = await apiService.deleteQuestion(id);
 
-    try {
-      const res = await apiService.deleteQuestion(id);
-      if (res.status === "true") {
-        toast.success("Deleted successfully");
-        setCurrentPage(1);
-        setFilters({ ...filters });
-      } else toast.error(res.message);
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to delete");
+        if (res.status === "success") {
+          toast.success("Deleted successfully");
+          setCurrentPage(1);
+          setFilters({ ...filters });
+        } else {
+          toast.error(res.message);
+        }
+
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to delete");
+      }
     }
-  };
+  });
+};
+
 
   // Save (create / update)
   const handleSaveQuestion = async () => {
