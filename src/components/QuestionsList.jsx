@@ -32,6 +32,17 @@ const QuestionsList = ({
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
   const [openDropdown, setOpenDropdown] = useState(null);
 
+  // Pagination
+  // const totalPages = Math.ceil(totalCount / pageSize);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (newPageSize) => {
+    setPageSize(newPageSize);
+    setCurrentPage(1);
+  };
+
   const DropdownFilter = ({
     id,
     label,

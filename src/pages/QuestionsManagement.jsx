@@ -122,7 +122,7 @@ const QuestionsManagement = () => {
         }));
 
         setQuestions(formatted);
-        setTotalCount(response?.count || list.length);
+        setTotalCount(response?.data?.total || list.length);
       } catch (err) {
         console.error("Error loading questions:", err);
         setQuestions([]);
@@ -219,7 +219,7 @@ const QuestionsManagement = () => {
         : [],
 
     };
-    if((payload?.optionValue ?? []).length==0){
+    if((payload.questionType == 4) && ((payload?.optionValue ?? []).length==0)){
       return toast.error("Add choices to continue."); 
     }
 
@@ -228,7 +228,7 @@ const QuestionsManagement = () => {
     // return 0;
     try {
       const res = editingQuestionId
-        ? await apiService.updateQuestion(payload)
+        ? await apiService.updateQuestion(payload,editingQuestionId)
         : await apiService.createQuestion(payload);
 
       if (res?.status === "success") {

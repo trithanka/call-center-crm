@@ -261,11 +261,15 @@ class ApiService {
       body: JSON.stringify(questionData)
     };
 
+
     return this.authenticatedRequest('/nw/question-mangager/add-questions', requestOptions);
   }
 
   // Update question method
-  async updateQuestion(questionData) {
+  async updateQuestion(questionData,editingQuestionId=null) {
+    questionData.questionId=editingQuestionId;
+    console.log(questionData);
+
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -274,8 +278,9 @@ class ApiService {
       },
       body: JSON.stringify(questionData)
     };
+    
 
-    return this.authenticatedRequest('/nw/master/update/question', requestOptions);
+    return this.authenticatedRequest('/nw/question-mangager/update-questions', requestOptions);
   }
 
   // Delete question method
@@ -293,7 +298,7 @@ class ApiService {
       body: JSON.stringify(requestData)
     };
 
-    return this.authenticatedRequest('/nw/master/delete/question', requestOptions);
+    return this.authenticatedRequest('/nw/question-mangager/delete-questions', requestOptions);
   }
 
   // Get auth token from localStorage
