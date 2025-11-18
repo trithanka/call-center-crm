@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { MdChevronRight, MdHome } from "react-icons/md";
+import * as Lu from "react-icons/lu";
 
 /**
  * Reusable Breadcrumb Component
@@ -20,7 +20,7 @@ const Breadcrumb = ({ crumbs = [], customClassNames = {} }) => {
     <div className={containerClass}>
       <div className={navClass}>
         <nav className="flex" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1">
+          <ol className="inline-flex items-center space-x-1 uppercase">
             {crumbs.map((crumb, index) => {
               const isLast = index === crumbs.length - 1;
               const isFirst = index === 0;
@@ -30,12 +30,12 @@ const Breadcrumb = ({ crumbs = [], customClassNames = {} }) => {
               return (
                 <li key={`${crumb.to}-${index}`} className="flex items-center">
                   {index > 0 && (
-                    <MdChevronRight className="w-3 h-3 text-gray-600 mx-1" />
+                    <Lu.LuChevronRight className="w-3 h-3 text-gray-600 mx-1" />
                   )}
                   {isLast || !isClickable ? (
                     <span className="text-xs text-gray-600 flex items-center">
                       {isFirst && (
-                        <MdHome className="w-3 h-3 text-gray-600 mr-1" />
+                        <Lu.LuHouse className="w-3 h-3 text-gray-600 mr-1" />
                       )}
                       {crumb.label}
                     </span>
@@ -45,7 +45,7 @@ const Breadcrumb = ({ crumbs = [], customClassNames = {} }) => {
                       className="text-xs text-gray-500 hover:text-emerald-600 transition-colors flex items-center hover:underline"
                     >
                       {isFirst && (
-                        <MdHome className="w-3 h-3 text-gray-600 mr-1" />
+                        <Lu.LuHouse className="w-3 h-3 text-gray-600 mr-1" />
                       )}
                       {crumb.label}
                     </Link>

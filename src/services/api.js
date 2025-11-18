@@ -210,10 +210,83 @@ class ApiService {
   }
 
   // Get questions method for query type
-  async getQuestions(userRoleId, queryTypeId) {
+  async getQuestions(currentPage = 1, pageSize = 1000, filters = {}) {
     const requestData = {
-      userRoleId: userRoleId,
-      queryTypeId: queryTypeId
+      currentPage: currentPage,
+      pageSize: pageSize
+    };
+
+
+  
+    // Add filters only when provided
+    if (filters?.userRoleId && filters?.userRoleId !== "all")
+      requestData.userRoleId = filters?.userRoleId;
+  
+    if (filters?.queryTypeId && filters?.queryTypeId !== "all")
+      requestData.queryTypeId = filters?.queryTypeId;
+  
+    if (filters?.questionType && filters?.questionType !== "all")
+      requestData.questionType = filters?.questionType;
+  
+    if (filters?.search && filters?.search.trim() !== "")
+      requestData.search = filters?.search.trim();
+
+    console.log("filters",filters)
+    console.log("requestData",requestData)
+  
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(requestData),
+    };
+  
+    return this.authenticatedRequest(
+      "/nw/master/get/questions",
+      requestOptions
+    );
+  }
+  
+
+  // Create question method
+  async createQuestion(questionData) {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(questionData)
+    };
+
+
+    return this.authenticatedRequest('/nw/question-mangager/add-questions', requestOptions);
+  }
+
+  // Update question method
+  async updateQuestion(questionData,editingQuestionId=null) {
+    questionData.questionId=editingQuestionId;
+    console.log(questionData);
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(questionData)
+    };
+    
+
+    return this.authenticatedRequest('/nw/question-mangager/update-questions', requestOptions);
+  }
+
+  // Delete question method
+  async deleteQuestion(questionId) {
+    const requestData = {
+      questionId: questionId
     };
 
     const requestOptions = {
@@ -225,7 +298,7 @@ class ApiService {
       body: JSON.stringify(requestData)
     };
 
-    return this.authenticatedRequest('/nw/master/get/questions', requestOptions);
+    return this.authenticatedRequest('/nw/question-mangager/delete-questions', requestOptions);
   }
 
   // Get auth token from localStorage

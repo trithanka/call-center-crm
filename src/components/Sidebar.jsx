@@ -8,6 +8,7 @@ const navigation = [
     { name: "Dashboard", icon: Md.MdOutlineSpaceDashboard, to: "/dashboard" },
     { name: "Grievances", icon: Md.MdOutlineLiveHelp, to: "/grievance" },
     { name: "Feedbacks", icon: Md.MdOutlineFeedback, to: "/feedback" },
+    { name: "Questions", icon: Md.MdOutlineQuiz, to: "/questions" },
 ];
 
 const cn = (...classes) => classes.filter(Boolean).join(' ');
@@ -57,6 +58,9 @@ const Sidebar = () => {
             // Match feedback routes AND outgoing forms
             return location.pathname.startsWith("/feedback") || 
                    location.pathname.includes("/new/outgoing");
+        }
+        if (path === "/questions") {
+            return location.pathname === "/questions";
         }
         return location.pathname === path;
     };

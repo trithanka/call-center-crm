@@ -759,6 +759,7 @@ const GrievanceList = () => {
                   className="inline-flex items-center justify-center text-gray-500 hover:text-blue-600 transition-colors duration-150"
                   title="View Ticket"
                 >
+                  
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="14"
@@ -795,7 +796,7 @@ const GrievanceList = () => {
 
   {/* Pagination */}
   {totalPages > 1 && (
-    <div className="px-4 py-3 border-t border-gray-100 bg-gray-50 flex flex-wrap items-center justify-between">
+    <div className="px-4 py-3 border-t border-gray-100 flex flex-wrap items-center justify-between">
       <div className="flex items-center gap-2">
         <span className="text-xs text-gray-600">Rows per page:</span>
         <select
