@@ -174,6 +174,25 @@ const GrievanceList = () => {
     }
   };
 
+  // Format date of birth for display
+  const formatDateOfBirth = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const parsedDate = new Date(dateString);
+      if (!isNaN(parsedDate.getTime())) {
+        return parsedDate.toLocaleDateString("en-US", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      }
+      return "N/A";
+    } catch (error) {
+      console.error("Error formatting date of birth:", dateString, error);
+      return "N/A";
+    }
+  };
+
   // Filter functions
   const handleFilterChange = (field, value) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
@@ -688,6 +707,8 @@ const GrievanceList = () => {
             "Role",
             "Query Type",
             "Date",
+            "DOB",
+            "Gender",
             "Status",
             "",
           ].map((header, idx) => (
@@ -736,6 +757,14 @@ const GrievanceList = () => {
                 {formatDate(item.vsEntryDateTime)}
               </td>
 
+              <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                {formatDateOfBirth(item.dob)}
+              </td>
+
+              <td className="px-4 py-3 text-gray-700">
+                {item.vsGender || "N/A"}
+              </td>
+
               <td className="px-4 py-3">
                 <span
                   className={`inline-flex items-center rounded-full text-xs text-gray-600 whitespace-nowrap`}
@@ -759,7 +788,6 @@ const GrievanceList = () => {
                   className="inline-flex items-center justify-center text-gray-500 hover:text-blue-600 transition-colors duration-150"
                   title="View Ticket"
                 >
-                  
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="14"
@@ -783,10 +811,10 @@ const GrievanceList = () => {
         ) : (
           <tr>
             <td
-              colSpan="9"
+              colSpan="11"
               className="px-6 py-8 text-center text-gray-500 italic bg-gray-50"
             >
-              No grievances found. 🌿 Everything’s calm for now.
+              No grievances found. 🌿 Everything's calm for now.
             </td>
           </tr>
         )}

@@ -175,6 +175,25 @@ const FeedbackList = () => {
     }
   };
 
+  // Format date of birth for display
+  const formatDateOfBirth = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const parsedDate = new Date(dateString);
+      if (!isNaN(parsedDate.getTime())) {
+        return parsedDate.toLocaleDateString("en-US", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      }
+      return "N/A";
+    } catch (error) {
+      console.error("Error formatting date of birth:", dateString, error);
+      return "N/A";
+    }
+  };
+
   // Filter functions
   const handleFilterChange = (field, value) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
@@ -671,6 +690,8 @@ const FeedbackList = () => {
                     "Role",
                     "Query Type",
                     "Date",
+                    "DOB",
+                    "Gender",
                     "Answered",
                     "",
                   ].map((header, idx) => (
@@ -719,6 +740,14 @@ const FeedbackList = () => {
                         {formatDate(item.vsEntryDateTime)}
                       </td>
 
+                      <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                        {formatDateOfBirth(item.dob)}
+                      </td>
+
+                      <td className="px-4 py-3 text-gray-700">
+                        {item.vsGender || "N/A"}
+                      </td>
+
                       <td className="px-4 py-3">
                         <span
                           className={`${item.bIsUnanswered === 0 || item.bIsUnanswered === "0"
@@ -761,7 +790,7 @@ const FeedbackList = () => {
                 ) : (
                   <tr>
                     <td
-                      colSpan="9"
+                      colSpan="11"
                       className="px-6 py-8 text-center text-gray-500 italic bg-gray-50"
                     >
                       No feedback found. 🌿 Everything's calm for now.

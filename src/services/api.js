@@ -208,8 +208,24 @@ class ApiService {
 
     return this.authenticatedRequest('/nw/master/get/user-data', requestOptions);
   }
+  // Get user data by ID method
+  async getUserDataById(userId, userType) {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: userId,
+        userType: userType
+      })
+    };
 
-  // Get questions method for query type
+    return this.authenticatedRequest('/nw/master/userdata/byid', requestOptions);
+  }
+
+ // Get questions method for query type
   async getQuestions(currentPage = 1, pageSize = 1000, filters = {}) {
     const requestData = {
       currentPage: currentPage,

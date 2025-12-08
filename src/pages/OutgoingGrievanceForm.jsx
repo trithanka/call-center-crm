@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import apiService from "../services/api";
+import CandidateInfoModal from "../components/CandidateInfoModal";
 import * as Lu from "react-icons/lu";
 
 const OutgoingGrievanceForm = () => {
@@ -34,6 +35,8 @@ const OutgoingGrievanceForm = () => {
     dateTime: "",
     district: "",
     address: "",
+    dob: "",
+    gender: "",
     grievanceType: "outgoing", // Fixed to outgoing
   });
 
@@ -45,6 +48,9 @@ const OutgoingGrievanceForm = () => {
   const [isSearchingCandidates, setIsSearchingCandidates] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [isFormDisabled, setIsFormDisabled] = useState(true); // Start with form disabled
+
+  // Candidate info modal state
+  const [showCandidateInfoModal, setShowCandidateInfoModal] = useState(null);
 
   // Load messages from localStorage on mount
   useEffect(() => {
@@ -149,6 +155,8 @@ const OutgoingGrievanceForm = () => {
       mobile: "",
       district: "",
       address: "",
+      dob: "",
+      gender: "",
       queryType: "", // Clear query type to reset questions
     }));
 
@@ -168,9 +176,10 @@ const OutgoingGrievanceForm = () => {
     } else if (
       role === "Training Partner" ||
       role === "Training Center" ||
-      role === "Trainer"
+      role === "Trainer" ||
+      role === "Employer"
     ) {
-      // Show search for training roles
+      // Show search for training roles and employer
       setShowCandidateSearch(true);
       setIsFormDisabled(true);
     } else if (role !== "") {
@@ -204,6 +213,8 @@ const OutgoingGrievanceForm = () => {
         userType = "TrainingCenter";
       } else if (formData.role === "Trainer") {
         userType = "Trainer";
+      } else if (formData.role === "Employer") {
+        userType = "Employer";
       }
       
       const response = await apiService.getUserData({
@@ -218,7 +229,8 @@ const OutgoingGrievanceForm = () => {
           const roleName = formData.role === "Candidate" ? "candidates" : 
                           formData.role === "Training Partner" ? "training partners" :
                           formData.role === "Training Center" ? "training centers" :
-                          formData.role === "Trainer" ? "trainers" : "results";
+                          formData.role === "Trainer" ? "trainers" :
+                          formData.role === "Employer" ? "employers" : "results";
           toast.info(`No ${roleName} found`);
         }
       } else {
@@ -250,7 +262,9 @@ const OutgoingGrievanceForm = () => {
       name: candidate.candidateName || candidate.name,
       mobile: candidate.mobile,
       district: candidate.district,
-      address: candidate.address || ""
+      address: candidate.address || "",
+      dob: candidate.dob || "",
+      gender: candidate.vsGender || ""
     }));
     setShowCandidateSearch(false);
     setIsFormDisabled(false);
@@ -266,7 +280,9 @@ const OutgoingGrievanceForm = () => {
       name: "",
       mobile: "",
       district: "",
-      address: ""
+      address: "",
+      dob: "",
+      gender: ""
     }));
     setShowCandidateSearch(true);
     setIsFormDisabled(true);
@@ -277,6 +293,25 @@ const OutgoingGrievanceForm = () => {
     setCandidateSearchText("");
     setCandidateSearchResults([]);
     setSelectedCandidate(null);
+  };
+
+  // Format date of birth for display
+  const formatDateOfBirth = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const parsedDate = new Date(dateString);
+      if (!isNaN(parsedDate.getTime())) {
+        return parsedDate.toLocaleDateString("en-US", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      }
+      return "N/A";
+    } catch (error) {
+      console.error("Error formatting date of birth:", dateString, error);
+      return "N/A";
+    }
   };
 
   // Helper function to parse options string (format: "optionId:optionValue||optionId:optionValue")
@@ -773,12 +808,32 @@ const OutgoingGrievanceForm = () => {
                                     <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-32">
                                       Mobile
                                     </th>
+                                    {formData.role === "Employer" && (
+                                      <>
+                                        <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-40">
+                                          Emp Type
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-48">
+                                          Email
+                                        </th>
+                                      </>
+                                    )}
                                     {(formData.role === "Candidate" ||
                                       formData.role === "Training Center" ||
                                       formData.role === "Training Partner") && (
                                       <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-40">
                                         District
                                       </th>
+                                    )}
+                                    {formData.role === "Candidate" && (
+                                      <>
+                                        <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-40">
+                                          DOB
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-32">
+                                          Gender
+                                        </th>
+                                      </>
                                     )}
                                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase w-1/12"></th>
                                   </tr>
@@ -812,6 +867,16 @@ const OutgoingGrievanceForm = () => {
                                         <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
                                           {candidate.mobile}
                                         </td>
+                                        {formData.role === "Employer" && (
+                                          <>
+                                            <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
+                                              {candidate.empType || "N/A"}
+                                            </td>
+                                            <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
+                                              {candidate.email || "N/A"}
+                                            </td>
+                                          </>
+                                        )}
                                         {(formData.role === "Candidate" ||
                                           formData.role === "Training Center" ||
                                           formData.role ===
@@ -819,6 +884,16 @@ const OutgoingGrievanceForm = () => {
                                           <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
                                             {candidate.district}
                                           </td>
+                                        )}
+                                        {formData.role === "Candidate" && (
+                                          <>
+                                            <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
+                                              {formatDateOfBirth(candidate.dob)}
+                                            </td>
+                                            <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
+                                              {candidate.vsGender || "N/A"}
+                                            </td>
+                                          </>
                                         )}
                                         <td className="px-4 py-2 whitespace-nowrap">
                                           <button
@@ -932,15 +1007,45 @@ const OutgoingGrievanceForm = () => {
                             </p>
                           </div>
                         </div>
-                        <button
-                          onClick={clearCandidateSelection}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-xs flex gap-1"
-                        >
-                          <Lu.LuRepeat className="text-base" />
-                          {formData.role === "Candidate"
-                            ? "Candidate"
-                            : formData.role}
-                        </button>
+                        <div className="flex items-center gap-2">
+                          {/* Info Button */}
+                          {(selectedCandidate.Id || selectedCandidate.candidateId || selectedCandidate.userId) && (
+                            <button
+                              onClick={() => {
+                                // Determine userType based on role
+                                let userType = "Candidate";
+                                if (formData.role === "Training Partner") {
+                                  userType = "TrainingPartner";
+                                } else if (formData.role === "Training Center") {
+                                  userType = "TrainingCenter";
+                                } else if (formData.role === "Trainer") {
+                                  userType = "Trainer";
+                                } else if (formData.role === "Employer") {
+                                  userType = "Employer";
+                                }
+                                
+                                const userId = selectedCandidate.Id || selectedCandidate.candidateId || selectedCandidate.userId;
+                                if (userId) {
+                                  setShowCandidateInfoModal({ userId, userType });
+                                }
+                              }}
+                              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-xs flex gap-1 items-center"
+                              title="View Candidate Details"
+                            >
+                              <Lu.LuInfo className="text-base" />
+                              Info
+                            </button>
+                          )}
+                          <button
+                            onClick={clearCandidateSelection}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-xs flex gap-1"
+                          >
+                            <Lu.LuRepeat className="text-base" />
+                            {formData.role === "Candidate"
+                              ? "Candidate"
+                              : formData.role}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -950,7 +1055,8 @@ const OutgoingGrievanceForm = () => {
                     ((formData.role !== "Candidate" &&
                       formData.role !== "Training Partner" &&
                       formData.role !== "Training Center" &&
-                      formData.role !== "Trainer") ||
+                      formData.role !== "Trainer" &&
+                      formData.role !== "Employer") ||
                       selectedCandidate) && (
                       <>
                         <div className="grid lg:grid-cols-2 gap-6 px-6 py-1">
@@ -1016,6 +1122,47 @@ const OutgoingGrievanceForm = () => {
                             )}
                           </div>
                         </div>
+
+                        {/* DOB and Gender */}
+                        <div className="grid lg:grid-cols-2 gap-6 px-6 py-1">
+                          {/* Date of Birth */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-800">
+                              Date of Birth
+                            </label>
+                            <input
+                              type="text"
+                              value={
+                                formData.dob
+                                  ? new Date(formData.dob).toLocaleDateString("en-US", {
+                                      day: "numeric",
+                                      month: "long",
+                                      year: "numeric",
+                                    })
+                                  : ""
+                              }
+                              readOnly
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 bg-gray-50"
+                              disabled={true}
+                              placeholder="Date of birth will be loaded from user data"
+                            />
+                          </div>
+
+                          {/* Gender */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-800">
+                              Gender
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.gender || ""}
+                              readOnly
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 bg-gray-50"
+                              disabled={true}
+                              placeholder="Gender will be loaded from user data"
+                            />
+                          </div>
+                        </div>
                       </>
                     )}
 
@@ -1024,7 +1171,8 @@ const OutgoingGrievanceForm = () => {
                     ((formData.role !== "Candidate" &&
                       formData.role !== "Training Partner" &&
                       formData.role !== "Training Center" &&
-                      formData.role !== "Trainer") ||
+                      formData.role !== "Trainer" &&
+                      formData.role !== "Employer") ||
                       selectedCandidate) && (
                       <>
                         <div className="grid lg:grid-cols-2 gap-6 px-6 py-1">
@@ -1428,7 +1576,8 @@ const OutgoingGrievanceForm = () => {
                         ((formData.role !== "Candidate" &&
                           formData.role !== "Training Partner" &&
                           formData.role !== "Training Center" &&
-                          formData.role !== "Trainer") ||
+                          formData.role !== "Trainer" &&
+                          formData.role !== "Employer") ||
                           selectedCandidate) &&
                         !isLoadingQuestions && (
                           <div className="px-6 py-4 flex justify-between border-t border-gray-200">
@@ -1591,6 +1740,16 @@ const OutgoingGrievanceForm = () => {
           </main>
         </div>
       </div>
+
+      {/* Candidate Info Modal */}
+      {showCandidateInfoModal && (
+        <CandidateInfoModal
+          isOpen={!!showCandidateInfoModal}
+          onClose={() => setShowCandidateInfoModal(null)}
+          userId={showCandidateInfoModal.userId}
+          userType={showCandidateInfoModal.userType}
+        />
+      )}
     </div>
   );
 };

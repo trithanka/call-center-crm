@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/static/css/main.eb1a21c8.css",
+    "main.js": "/static/js/main.98058999.js",
+    "static/media/crm-asset.png": "/static/media/crm-asset.e0659bad8141c7999661.png",
+    "static/media/asdm-logo3.png": "/static/media/asdm-logo3.d28db9fda132e916d437.png",
+    "index.html": "/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.eb1a21c8.css",
+    "static/js/main.98058999.js"
+  ]
+}
