@@ -275,7 +275,7 @@ const Navbar = () => {
           <div className="flex items-center gap-2 lg:gap-8 flex-grow">
             <button
               onClick={toggleSidebar}
-              className={`toggle-button size-10 rounded-xl p-2 flex items-center justify-center ${
+              className={`toggle-button size-10 rounded-xl py-2 flex items-center ${
                 !navOpen ? "sidebar-collapsed" : ""
               }`}
               title="Toggle Sidebar"

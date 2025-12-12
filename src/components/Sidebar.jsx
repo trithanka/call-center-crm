@@ -1,15 +1,39 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import asdmLogo from "../assets/asdm-logo3.png";
 import { useSidebar } from "../context/SidebarContext";
+import apiService from "../services/api";
 import * as Md from "react-icons/md";
 
 const navigation = [
     { name: "Dashboard", icon: Md.MdOutlineSpaceDashboard, to: "/dashboard" },
     { name: "Grievances", icon: Md.MdOutlineLiveHelp, to: "/grievance" },
     { name: "Feedbacks", icon: Md.MdOutlineFeedback, to: "/feedback" },
-    { name: "Questions", icon: Md.MdOutlineQuiz, to: "/questions" },
+    { name: "Questions", icon: Md.MdOutlineQuiz, to: "/questions", requiredRoleId: 97 },
+    {name: "Agents", icon : Md.MdOutlinePerson, to: "/agents", requiredRoleId: 97 },
 ];
+
+// Helper function to decode JWT token and extract roleId
+const getRoleIdFromToken = () => {
+    try {
+        const token = apiService.getAuthToken();
+        if (!token) return null;
+        
+        // JWT tokens have 3 parts: header.payload.signature
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        
+        // Decode the payload (second part)
+        const payload = JSON.parse(atob(parts[1]));
+        
+        // Extract roleId from the decoded payload
+        // Based on backend, the structure is: { data: { pklRoleId: ... } }
+        return payload?.data?.pklRoleId || null;
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+    }
+};
 
 const cn = (...classes) => classes.filter(Boolean).join(' ');
 
@@ -17,6 +41,19 @@ const Sidebar = () => {
     const location = useLocation();
     const { navOpen, activeItem, setActiveNavItem, closeSidebar } = useSidebar();
     const overlayRef = useRef(null);
+    
+    // Get roleId from token and filter navigation items
+    const roleId = useMemo(() => getRoleIdFromToken(), []);
+    const filteredNavigation = useMemo(() => {
+        return navigation.filter(item => {
+            // If item has requiredRoleId, only show if current roleId matches
+            if (item.requiredRoleId !== undefined) {
+                return roleId === item.requiredRoleId;
+            }
+            // Otherwise, show all items
+            return true;
+        });
+    }, [roleId]);
 
     // Close on Escape key
     useEffect(() => {
@@ -61,6 +98,10 @@ const Sidebar = () => {
         }
         if (path === "/questions") {
             return location.pathname === "/questions";
+        }
+        if (path === "/agents") {
+            return location.pathname.startsWith("/agents") || 
+                   location.pathname.includes("/new");
         }
         return location.pathname === path;
     };
@@ -152,7 +193,7 @@ const Sidebar = () => {
 
                         {/* Main Navigation */}
                         <ul className="space-y-2">
-                            {navigation.map(item => (
+                            {filteredNavigation.map(item => (
                                 <li key={item.name}>
         <Link
                                         to={item.to}

@@ -392,9 +392,17 @@ const Dashboard = () => {
       try {
         setGrievancesLoading(true);
 
+        // Get loginId from token
+        const loginId = apiService.getLoginIdFromToken();
+        if (!loginId) {
+          console.error("Unable to get user login ID");
+          setGrievancesLoading(false);
+          return;
+        }
+
         // Fetch first page with 5 items to get latest grievances
         const response = await apiService.getGrievances(
-          2892,
+          loginId,
           1, // page 1
           5, // limit to 5 items
           {

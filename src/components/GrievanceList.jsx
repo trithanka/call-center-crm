@@ -97,10 +97,17 @@ const GrievanceList = () => {
           allFilters.status = currentStatus;
         }
 
-        // Using loginId 2892 as provided in the example
+        // Get loginId from token
+        const loginId = apiService.getLoginIdFromToken();
+        if (!loginId) {
+          setError("Unable to get user login ID. Please login again.");
+          setLoading(false);
+          return;
+        }
+
         console.log("Grievances API call with filters:", allFilters);
         const response = await apiService.getGrievances(
-          2892,
+          loginId,
           currentPage,
           pageSize,
           allFilters

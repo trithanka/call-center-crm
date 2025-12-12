@@ -317,9 +317,76 @@ class ApiService {
     return this.authenticatedRequest('/nw/question-mangager/delete-questions', requestOptions);
   }
 
+  // Get agents/call center users method
+  async getAgents() {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({})
+    };
+
+    return this.authenticatedRequest('/nw/callCenter/get', requestOptions);
+  }
+
+  // Create agent method
+  async createAgent(agentData) {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(agentData)
+    };
+
+    return this.authenticatedRequest('/nw/callCenter/create', requestOptions);
+  }
+
+  // Update agent enable/disable status
+  async updateAgentStatus(loginId, status) {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        loginId: loginId,
+        status: status
+      })
+    };
+
+    return this.authenticatedRequest('/nw/callCenter/update', requestOptions);
+  }
+
   // Get auth token from localStorage
   getAuthToken() {
     return localStorage.getItem('authToken');
+  }
+
+  // Get loginId from JWT token
+  getLoginIdFromToken() {
+    try {
+      const token = this.getAuthToken();
+      if (!token) return null;
+      
+      // JWT tokens have 3 parts: header.payload.signature
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      
+      // Decode the payload (second part)
+      const payload = JSON.parse(atob(parts[1]));
+      
+      // Extract loginId from the decoded payload
+      // Based on backend, the structure is: { data: { pklLoginId: ... } }
+      return payload?.data?.pklLoginId || null;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
   }
 
   // Set auth token to localStorage

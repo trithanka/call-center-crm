@@ -11,6 +11,8 @@ import QuestionsManagement from "./pages/QuestionsManagement";
 import { Chat } from "./pages/chat";
 import IncomingGrievanceForm from "./pages/IncomingGrievanceForm";
 import OutgoingGrievanceForm from "./pages/OutgoingGrievanceForm";
+import Agents from "./pages/Agents";
+import AddAgent from "./pages/AddAgent";
 import { AuthProvider } from "./context/AuthContext";
 import { SidebarProvider } from "./context/SidebarContext";
 import { BreadcrumbProvider } from "./context/BreadcrumbContext";
@@ -52,6 +54,22 @@ function App() {
           element={
             <ProtectedRoute>
               <QuestionsManagement/>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/agents" 
+          element={
+            <ProtectedRoute>
+              <Agents/>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/agents/new" 
+          element={
+            <ProtectedRoute>
+              <AddAgent/>
             </ProtectedRoute>
           } 
         />
