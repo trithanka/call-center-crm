@@ -19,6 +19,9 @@ const IncomingGrievanceForm = () => {
     roles: [],
     queryTypes: [],
     districts: [],
+    schemes: [],
+    courses: [],
+    batches: [],
   });
   const [isLoadingMaster, setIsLoadingMaster] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,8 +48,45 @@ const IncomingGrievanceForm = () => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [isFormDisabled, setIsFormDisabled] = useState(true); // Start with form disabled
 
+  // Filter states
+  const [filters, setFilters] = useState({
+    scheme: "",
+    course: "",
+    district: "",
+    batch: "",
+  });
+
+  // Searchable dropdown states
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [dropdownSearch, setDropdownSearch] = useState({
+    scheme: "",
+    course: "",
+    district: "",
+    batch: "",
+  });
+
   // Candidate info modal state
   const [showCandidateInfoModal, setShowCandidateInfoModal] = useState(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openDropdown && !event.target.closest(".searchable-dropdown")) {
+        setOpenDropdown(null);
+        setDropdownSearch({
+          scheme: "",
+          course: "",
+          district: "",
+          batch: "",
+        });
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openDropdown]);
 
   // Load messages from localStorage on mount
   useEffect(() => {
@@ -66,12 +106,53 @@ const IncomingGrievanceForm = () => {
         setIsLoadingMaster(true);
         const response = await apiService.getMasterData();
 
-        if (response.message === "Fetched Successfully!" && response.data) {
+        console.log("Full API Response:", response);
+        
+        // Check for success - either status: true or message contains "Fetched Successfully"
+        if ((response.status === true || response.message === "Fetched Successfully!" || response.message === "Fetched Successfully") && response.data) {
+          console.log("Response data keys:", Object.keys(response.data));
+          
+          // Handle case sensitivity - try multiple possible key names
+          const rolesData = response.data.role || 
+                           response.data.Role || 
+                           response.data.roles || 
+                           response.data.Roles || 
+                           [];
+          
+          console.log("Roles from API (raw):", rolesData);
+          console.log("Roles array length:", rolesData.length);
+          console.log("First role example:", rolesData[0]);
+          
+          // Filter roles to only show enabled ones (bEnable === 1)
+          // If bEnable is not provided, include the role (show all if no bEnable field exists)
+          const enabledRoles = rolesData.filter(
+            (role) => {
+              // If bEnable field doesn't exist, include the role
+              if (role.bEnable === undefined || role.bEnable === null) {
+                return true;
+              }
+              // Otherwise, only include if enabled
+              return role.bEnable === 1 || role.bEnable === true || role.bEnable === "1";
+            }
+          );
+          
+          // If filtering results in empty array, use all roles (fallback)
+          const finalRoles = enabledRoles.length > 0 ? enabledRoles : rolesData;
+          
+          console.log("Enabled roles count:", enabledRoles.length);
+          console.log("Final roles to display:", finalRoles);
+          console.log("Final roles count:", finalRoles.length);
+          
           setMasterData({
-            roles: response.data.role || [],
+            roles: finalRoles,
             queryTypes: response.data.queryType || [],
             districts: response.data.district || [],
+            schemes: response.data.scheme || [],
+            courses: response.data.course || [],
+            batches: response.data.batch || [],
           });
+        } else {
+          console.error("API response error:", response);
         }
       } catch (error) {
         console.error("Failed to fetch master data:", error);
@@ -84,6 +165,9 @@ const IncomingGrievanceForm = () => {
             { pklUserRoleId: 4, vsRoleName: "Training Partner" },
             { pklUserRoleId: 5, vsRoleName: "Public" },
           ],
+          schemes: [],
+          courses: [],
+          batches: [],
           queryTypes: [
             { pklQueryTypeId: 1, vsQueryType: "Registration" },
             { pklQueryTypeId: 2, vsQueryType: "Course" },
@@ -92,6 +176,9 @@ const IncomingGrievanceForm = () => {
             { pklQueryTypeId: 5, vsQueryType: "Employment" },
             { pklQueryTypeId: 6, vsQueryType: "Others" },
           ],
+          schemes: [],
+          courses: [],
+          batches: [],
           districts: [
             { pklDistrictId: 1132, vsDistrictName: "Bajali" },
             { pklDistrictId: 1130, vsDistrictName: "Baksa" },
@@ -160,6 +247,12 @@ const IncomingGrievanceForm = () => {
     setCandidateSearchType("name");
     setCandidateSearchResults([]);
     setSelectedCandidate(null);
+    setFilters({
+      scheme: "",
+      course: "",
+      district: "",
+      batch: "",
+    });
 
     if (role === "Candidate") {
       setShowCandidateSearch(true);
@@ -304,6 +397,69 @@ const IncomingGrievanceForm = () => {
     setCandidateSearchText("");
     setCandidateSearchResults([]);
     setSelectedCandidate(null);
+    setFilters({
+      scheme: "",
+      course: "",
+      district: "",
+      batch: "",
+    });
+    setOpenDropdown(null);
+    setDropdownSearch({
+      scheme: "",
+      course: "",
+      district: "",
+      batch: "",
+    });
+  };
+
+  // Get unique values from search results for filter options
+  const getUniqueValues = (fieldName) => {
+    if (candidateSearchResults.length === 0) return [];
+    
+    const values = candidateSearchResults
+      .map((candidate) => {
+        // Try multiple field name variations
+        return (
+          candidate[fieldName] ||
+          candidate[`vs${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}`] ||
+          candidate[fieldName.replace("Name", "")] ||
+          candidate[`vs${fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace("Name", "")}`] ||
+          ""
+        );
+      })
+      .filter((value) => value && value !== "N/A" && value.trim() !== "");
+    return [...new Set(values)].sort();
+  };
+
+  // Filter search results based on selected filters
+  const getFilteredResults = () => {
+    if (candidateSearchResults.length === 0) return [];
+
+    return candidateSearchResults.filter((candidate) => {
+      const schemeMatch =
+        !filters.scheme ||
+        candidate.schemeName === filters.scheme ||
+        candidate.vsSchemeName === filters.scheme ||
+        candidate.scheme === filters.scheme;
+
+      const courseMatch =
+        !filters.course ||
+        candidate.courseName === filters.course ||
+        candidate.vsCourseName === filters.course ||
+        candidate.course === filters.course;
+
+      const districtMatch =
+        !filters.district || candidate.district === filters.district;
+
+      const batchMatch =
+        !filters.batch ||
+        candidate.batchName === filters.batch ||
+        candidate.vsBatchName === filters.batch ||
+        candidate.batch === filters.batch ||
+        candidate.batchNumber === filters.batch;
+
+      return schemeMatch && courseMatch && districtMatch && batchMatch;
+    });
   };
 
   // Format date of birth for display
@@ -536,6 +692,13 @@ const IncomingGrievanceForm = () => {
                         <p className="text-sm text-gray-700">
                           Loading roles...
                         </p>
+                      ) : masterData.roles.length === 0 ? (
+                        <div className="text-sm text-red-600">
+                          No roles available. Please check the console for details.
+                          <div className="text-xs text-gray-500 mt-1">
+                            Debug: masterData.roles = {JSON.stringify(masterData.roles)}
+                          </div>
+                        </div>
                       ) : (
                         <div className="flex flex-wrap gap-3">
                           {masterData.roles.map((role) => (
@@ -586,6 +749,283 @@ const IncomingGrievanceForm = () => {
                             : formData.role}
                         </h3>
                       </div>
+
+                      {/* Filter Section */}
+                      {formData.role === "Candidate" && (
+                        <div className="bg-blue-50 border-b border-blue-200 px-6 py-4">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="text-sm font-semibold text-blue-800">
+                              Filters
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {/* Scheme Filter */}
+                            <div className="searchable-dropdown relative">
+                              <label className="block text-xs font-medium text-gray-700 mb-1">
+                                Scheme
+                              </label>
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  onClick={() => setOpenDropdown(openDropdown === "scheme" ? null : "scheme")}
+                                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 bg-white text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                                >
+                                  <span className={filters.scheme ? "text-gray-900" : "text-gray-400"}>
+                                    {filters.scheme || "Select"}
+                                  </span>
+                                  <Lu.LuChevronDown className={`w-4 h-4 transition-transform ${openDropdown === "scheme" ? "rotate-180" : ""}`} />
+                                </button>
+                                {openDropdown === "scheme" && (
+                                  <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-96 overflow-hidden">
+                                    <div className="p-2 border-b border-gray-200">
+                                      <input
+                                        type="text"
+                                        placeholder="Search scheme..."
+                                        value={dropdownSearch.scheme}
+                                        onChange={(e) => setDropdownSearch({ ...dropdownSearch, scheme: e.target.value })}
+                                        className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                                        onClick={(e) => e.stopPropagation()}
+                                      />
+                                    </div>
+                                    <div className="overflow-y-auto max-h-80">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setFilters({ ...filters, scheme: "" });
+                                          setOpenDropdown(null);
+                                          setDropdownSearch({ ...dropdownSearch, scheme: "" });
+                                        }}
+                                        className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${!filters.scheme ? "bg-emerald-50 text-emerald-600 font-semibold" : ""}`}
+                                      >
+                                        Select
+                                      </button>
+                                      {masterData.schemes
+                                        .filter((scheme) =>
+                                          scheme.vsSchemeName.toLowerCase().includes(dropdownSearch.scheme.toLowerCase())
+                                        )
+                                        .map((scheme) => (
+                                          <button
+                                            key={scheme.pklSchemeId}
+                                            type="button"
+                                            onClick={() => {
+                                              setFilters({ ...filters, scheme: scheme.vsSchemeName });
+                                              setOpenDropdown(null);
+                                              setDropdownSearch({ ...dropdownSearch, scheme: "" });
+                                            }}
+                                            className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${filters.scheme === scheme.vsSchemeName ? "bg-emerald-50 text-emerald-600 font-semibold" : ""}`}
+                                          >
+                                            {scheme.vsSchemeName}
+                                          </button>
+                                        ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Course Filter */}
+                            <div className="searchable-dropdown relative">
+                              <label className="block text-xs font-medium text-gray-700 mb-1">
+                                Course
+                              </label>
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  onClick={() => setOpenDropdown(openDropdown === "course" ? null : "course")}
+                                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 bg-white text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                                >
+                                  <span className={filters.course ? "text-gray-900" : "text-gray-400"}>
+                                    {filters.course || "Select"}
+                                  </span>
+                                  <Lu.LuChevronDown className={`w-4 h-4 transition-transform ${openDropdown === "course" ? "rotate-180" : ""}`} />
+                                </button>
+                                {openDropdown === "course" && (
+                                  <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-96 overflow-hidden">
+                                    <div className="p-2 border-b border-gray-200">
+                                      <input
+                                        type="text"
+                                        placeholder="Search course..."
+                                        value={dropdownSearch.course}
+                                        onChange={(e) => setDropdownSearch({ ...dropdownSearch, course: e.target.value })}
+                                        className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                                        onClick={(e) => e.stopPropagation()}
+                                      />
+                                    </div>
+                                    <div className="overflow-y-auto max-h-80">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setFilters({ ...filters, course: "" });
+                                          setOpenDropdown(null);
+                                          setDropdownSearch({ ...dropdownSearch, course: "" });
+                                        }}
+                                        className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${!filters.course ? "bg-emerald-50 text-emerald-600 font-semibold" : ""}`}
+                                      >
+                                        Select
+                                      </button>
+                                      {masterData.courses
+                                        .filter((course) => {
+                                          const courseName = course.vsCourseName || course.courseName || "";
+                                          return courseName.toLowerCase().includes(dropdownSearch.course.toLowerCase());
+                                        })
+                                        .map((course) => {
+                                          const courseName = course.vsCourseName || course.courseName;
+                                          return (
+                                            <button
+                                              key={course.pklCourseId || course.id}
+                                              type="button"
+                                              onClick={() => {
+                                                setFilters({ ...filters, course: courseName });
+                                                setOpenDropdown(null);
+                                                setDropdownSearch({ ...dropdownSearch, course: "" });
+                                              }}
+                                              className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${filters.course === courseName ? "bg-emerald-50 text-emerald-600 font-semibold" : ""}`}
+                                            >
+                                              {courseName}
+                                            </button>
+                                          );
+                                        })}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* District Filter */}
+                            <div className="searchable-dropdown relative">
+                              <label className="block text-xs font-medium text-gray-700 mb-1">
+                                District
+                              </label>
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  onClick={() => setOpenDropdown(openDropdown === "district" ? null : "district")}
+                                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 bg-white text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                                >
+                                  <span className={filters.district ? "text-gray-900" : "text-gray-400"}>
+                                    {filters.district || "Select"}
+                                  </span>
+                                  <Lu.LuChevronDown className={`w-4 h-4 transition-transform ${openDropdown === "district" ? "rotate-180" : ""}`} />
+                                </button>
+                                {openDropdown === "district" && (
+                                  <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-96 overflow-hidden">
+                                    <div className="p-2 border-b border-gray-200">
+                                      <input
+                                        type="text"
+                                        placeholder="Search district..."
+                                        value={dropdownSearch.district}
+                                        onChange={(e) => setDropdownSearch({ ...dropdownSearch, district: e.target.value })}
+                                        className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                                        onClick={(e) => e.stopPropagation()}
+                                      />
+                                    </div>
+                                    <div className="overflow-y-auto max-h-80">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setFilters({ ...filters, district: "" });
+                                          setOpenDropdown(null);
+                                          setDropdownSearch({ ...dropdownSearch, district: "" });
+                                        }}
+                                        className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${!filters.district ? "bg-emerald-50 text-emerald-600 font-semibold" : ""}`}
+                                      >
+                                        Select
+                                      </button>
+                                      {masterData.districts
+                                        .filter((district) => district.fklStateId === 4)
+                                        .filter((district) =>
+                                          district.vsDistrictName.toLowerCase().includes(dropdownSearch.district.toLowerCase())
+                                        )
+                                        .map((district) => (
+                                          <button
+                                            key={district.pklDistrictId}
+                                            type="button"
+                                            onClick={() => {
+                                              setFilters({ ...filters, district: district.vsDistrictName });
+                                              setOpenDropdown(null);
+                                              setDropdownSearch({ ...dropdownSearch, district: "" });
+                                            }}
+                                            className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${filters.district === district.vsDistrictName ? "bg-emerald-50 text-emerald-600 font-semibold" : ""}`}
+                                          >
+                                            {district.vsDistrictName}
+                                          </button>
+                                        ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Batch Filter */}
+                            <div className="searchable-dropdown relative">
+                              <label className="block text-xs font-medium text-gray-700 mb-1">
+                                Batch
+                              </label>
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  onClick={() => setOpenDropdown(openDropdown === "batch" ? null : "batch")}
+                                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-900 bg-white text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                                >
+                                  <span className={filters.batch ? "text-gray-900" : "text-gray-400"}>
+                                    {filters.batch || "Select"}
+                                  </span>
+                                  <Lu.LuChevronDown className={`w-4 h-4 transition-transform ${openDropdown === "batch" ? "rotate-180" : ""}`} />
+                                </button>
+                                {openDropdown === "batch" && (
+                                  <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-96 overflow-hidden">
+                                    <div className="p-2 border-b border-gray-200">
+                                      <input
+                                        type="text"
+                                        placeholder="Search batch..."
+                                        value={dropdownSearch.batch}
+                                        onChange={(e) => setDropdownSearch({ ...dropdownSearch, batch: e.target.value })}
+                                        className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                                        onClick={(e) => e.stopPropagation()}
+                                      />
+                                    </div>
+                                    <div className="overflow-y-auto max-h-80">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setFilters({ ...filters, batch: "" });
+                                          setOpenDropdown(null);
+                                          setDropdownSearch({ ...dropdownSearch, batch: "" });
+                                        }}
+                                        className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${!filters.batch ? "bg-emerald-50 text-emerald-600 font-semibold" : ""}`}
+                                      >
+                                        Select
+                                      </button>
+                                      {masterData.batches
+                                        .filter((batch) => {
+                                          const batchName = batch.vsBatchName || batch.batchName || "";
+                                          return batchName.toLowerCase().includes(dropdownSearch.batch.toLowerCase());
+                                        })
+                                        .map((batch) => {
+                                          const batchName = batch.vsBatchName || batch.batchName;
+                                          return (
+                                            <button
+                                              key={batch.pklBatchId || batch.id}
+                                              type="button"
+                                              onClick={() => {
+                                                setFilters({ ...filters, batch: batchName });
+                                                setOpenDropdown(null);
+                                                setDropdownSearch({ ...dropdownSearch, batch: "" });
+                                              }}
+                                              className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${filters.batch === batchName ? "bg-emerald-50 text-emerald-600 font-semibold" : ""}`}
+                                            >
+                                              {batchName}
+                                            </button>
+                                          );
+                                        })}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       <div className="">
                         {/* Search Filters */}
@@ -659,23 +1099,31 @@ const IncomingGrievanceForm = () => {
                         </div>
 
                         {/* Results */}
-                        {candidateSearchResults.length > 0 ? (
-                          <div className="">
-                            <div className="flex justify-between items-center px-6 border-t border-neutral-300 p-4">
-                              <h4 className="text-sm font-medium text-gray-800">
-                                Search Results
-                              </h4>
-                              <button
-                                onClick={clearSearch}
-                                className="text-xs text-gray-500 hover:text-gray-700 underline"
-                              >
-                                Clear Results
-                              </button>
-                            </div>
+                        {(() => {
+                          const filteredResults = getFilteredResults();
+                          if (filteredResults.length > 0 || candidateSearchResults.length > 0) {
+                            return (
+                              <div className="">
+                                <div className="flex justify-between items-center px-6 border-t border-neutral-300 p-4">
+                                  <h4 className="text-sm font-medium text-gray-800">
+                                    Search Results
+                                    {formData.role === "Candidate" && filteredResults.length !== candidateSearchResults.length && (
+                                      <span className="ml-2 text-xs text-gray-500">
+                                        ({filteredResults.length} of {candidateSearchResults.length})
+                                      </span>
+                                    )}
+                                  </h4>
+                                  <button
+                                    onClick={clearSearch}
+                                    className="text-xs text-gray-500 hover:text-gray-700 underline"
+                                  >
+                                    Clear Results
+                                  </button>
+                                </div>
 
                             <div className="overflow-hidden border border-gray-200 shadow-sm max-h-96 overflow-y-auto">
                               <table className="w-full text-xs">
-                                <thead className="bg-emerald-200 border-b sticky top-0 self-start">
+                                <thead className="bg-emerald-200 border-b sticky top-0 z-10">
                                   <tr>
                                     {formData.role === "Candidate" && (
                                       <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-20">
@@ -690,6 +1138,22 @@ const IncomingGrievanceForm = () => {
                                     <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-32">
                                       Mobile
                                     </th>
+                                    {formData.role === "Candidate" && (
+                                      <>
+                                        <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-40">
+                                          Scheme
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-40">
+                                          Course
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-40">
+                                          Batch
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-40">
+                                          TC
+                                        </th>
+                                      </>
+                                    )}
                                     {formData.role === "Employer" && (
                                       <>
                                         <th className="px-4 py-3 text-left text-[.65rem] font-semibold text-gray-900 uppercase w-40">
@@ -721,7 +1185,7 @@ const IncomingGrievanceForm = () => {
                                   </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-neutral-300">
-                                  {candidateSearchResults.map(
+                                  {(formData.role === "Candidate" ? filteredResults : candidateSearchResults).map(
                                     (candidate, index) => (
                                       <tr
                                         key={
@@ -749,6 +1213,22 @@ const IncomingGrievanceForm = () => {
                                         <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
                                           {candidate.mobile}
                                         </td>
+                                        {formData.role === "Candidate" && (
+                                          <>
+                                            <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
+                                              {candidate.schemeName || candidate.vsSchemeName || candidate.scheme || "N/A"}
+                                            </td>
+                                            <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
+                                              {candidate.courseName || candidate.vsCourseName || candidate.course || "N/A"}
+                                            </td>
+                                            <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
+                                              {candidate.batchName || candidate.vsBatchName || candidate.batch || candidate.batchNumber || "N/A"}
+                                            </td>
+                                            <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
+                                              {candidate.tcName || candidate.vsTrainingCenterName || candidate.trainingCenter || candidate.TC || "N/A"}
+                                            </td>
+                                          </>
+                                        )}
                                         {formData.role === "Employer" && (
                                           <>
                                             <td className="px-4 py-2 text-gray-900 font-medium whitespace-nowrap">
@@ -795,7 +1275,18 @@ const IncomingGrievanceForm = () => {
                               </table>
                             </div>
                           </div>
-                        ) : (
+                            );
+                          } else if (candidateSearchResults.length > 0 && filteredResults.length === 0) {
+                            return (
+                              <div className="text-center flex flex-col items-center justify-center py-8 border-t border-gray-300 text-gray-500 bg-gray-50">
+                                <p className="text-sm font-medium">No results match the selected filters</p>
+                                <p className="text-xs text-gray-700 mt-1">
+                                  Try adjusting your filter criteria.
+                                </p>
+                              </div>
+                            );
+                          } else {
+                            return (
                           <div className="text-center flex flex-col items-center justify-center py-8 border-t border-gray-300 text-gray-500 bg-gray-50">
                             <svg
                               className="w-12 h-12 text-gray-300"
@@ -862,7 +1353,9 @@ const IncomingGrievanceForm = () => {
                               different keywords.
                             </p>
                           </div>
-                        )}
+                            );
+                          }
+                        })()}
                       </div>
                     </div>
                   )}
@@ -1362,3 +1855,4 @@ const IncomingGrievanceForm = () => {
 };
 
 export default IncomingGrievanceForm;
+

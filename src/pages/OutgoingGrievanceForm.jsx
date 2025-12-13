@@ -70,9 +70,35 @@ const OutgoingGrievanceForm = () => {
         setIsLoadingMaster(true);
         const response = await apiService.getMasterData();
 
-        if (response.message === "Fetched Successfully!" && response.data) {
+        // Check for success - either status: true or message contains "Fetched Successfully"
+        if ((response.status === true || response.message === "Fetched Successfully!" || response.message === "Fetched Successfully") && response.data) {
+          // Handle case sensitivity - try both 'role' and 'Role'
+          const rolesData = response.data.role || response.data.Role || [];
+          
+          console.log("Full API response:", response.data);
+          console.log("Roles from API:", rolesData);
+          
+          // Filter roles to only show enabled ones (bEnable === 1)
+          // If bEnable is not provided, include the role (show all if no bEnable field exists)
+          const enabledRoles = rolesData.filter(
+            (role) => {
+              // If bEnable field doesn't exist, include the role
+              if (role.bEnable === undefined || role.bEnable === null) {
+                return true;
+              }
+              // Otherwise, only include if enabled
+              return role.bEnable === 1 || role.bEnable === true || role.bEnable === "1";
+            }
+          );
+          
+          // If filtering results in empty array, use all roles (fallback)
+          const finalRoles = enabledRoles.length > 0 ? enabledRoles : rolesData;
+          
+          console.log("Enabled roles:", enabledRoles);
+          console.log("Final roles to display:", finalRoles);
+          
           setMasterData({
-            roles: response.data.role || [],
+            roles: finalRoles,
             queryTypes: response.data.queryType || [],
             districts: response.data.district || [],
           });
@@ -1755,3 +1781,4 @@ const OutgoingGrievanceForm = () => {
 };
 
 export default OutgoingGrievanceForm;
+
